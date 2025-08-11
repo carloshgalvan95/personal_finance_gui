@@ -14,8 +14,11 @@ import { Add, Receipt } from '@mui/icons-material';
 import { PageHeader } from '../components/common/PageHeader';
 import { TransactionForm } from '../components/features/TransactionForm';
 import { TransactionList } from '../components/features/TransactionList';
+import { AdvancedFilters } from '../components/features/AdvancedFilters';
 import { useAuth } from '../hooks/useAuth';
 import { TransactionService } from '../services/transactionService';
+import { FilterService, type TransactionFilters } from '../services/filterService';
+import { createLocalDate } from '../utils';
 import type {
   Transaction,
   TransactionForm as TransactionFormData,
@@ -24,6 +27,8 @@ import type {
 export const Transactions: React.FC = () => {
   const { state } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+  const [filters, setFilters] = useState<TransactionFilters>({});
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
@@ -32,6 +37,8 @@ export const Transactions: React.FC = () => {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   );
+
+
 
   // Snackbar state
   const [snackbar, setSnackbar] = useState<{
@@ -50,6 +57,12 @@ export const Transactions: React.FC = () => {
       loadTransactions();
     }
   }, [state.user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Apply filters when transactions or filters change
+  useEffect(() => {
+    const filtered = FilterService.applyFilters(transactions, filters);
+    setFilteredTransactions(filtered);
+  }, [transactions, filters]);
 
   const loadTransactions = () => {
     if (!state.user) return;
@@ -74,6 +87,12 @@ export const Transactions: React.FC = () => {
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
+
+  const handleFiltersChange = (newFilters: TransactionFilters) => {
+    setFilters(newFilters);
+  };
+
+
 
   const handleAddTransaction = () => {
     setEditingTransaction(null);
@@ -101,7 +120,7 @@ export const Transactions: React.FC = () => {
         amount: parseFloat(formData.amount),
         category: formData.category,
         description: formData.description.trim(),
-        date: new Date(formData.date),
+        date: createLocalDate(formData.date),
       };
 
       if (editingTransaction) {
@@ -187,10 +206,22 @@ export const Transactions: React.FC = () => {
           icon: <Add />,
         }}
       />
+      
+
+
+      {/* Advanced Filters */}
+      {state.user && (
+        <AdvancedFilters
+          transactions={transactions}
+          onFiltersChange={handleFiltersChange}
+          userId={state.user.id}
+          initialFilters={filters}
+        />
+      )}
 
       {/* Transaction List */}
       <TransactionList
-        transactions={transactions}
+        transactions={filteredTransactions}
         onEdit={handleEditTransaction}
         onDelete={handleDeleteTransaction}
         isLoading={isLoading}

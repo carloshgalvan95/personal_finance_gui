@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import type { GoalForm as GoalFormData, FinancialGoal } from '../../types';
 import { GoalService } from '../../services/goalService';
-import { formatCurrency } from '../../utils';
+import { formatCurrency, createLocalDate, formatDateForInput } from '../../utils';
 import { useAuth } from '../../hooks/useAuth';
 
 interface GoalFormProps {
@@ -36,7 +36,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({
     title: editGoal?.title || '',
     description: editGoal?.description || '',
     targetAmount: editGoal?.targetAmount?.toString() || '',
-    targetDate: editGoal?.targetDate ? editGoal.targetDate.toISOString().split('T')[0] : '',
+    targetDate: editGoal?.targetDate ? formatDateForInput(editGoal.targetDate) : '',
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -77,7 +77,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({
     if (!formData.targetDate) {
       newErrors.targetDate = 'Target date is required';
     } else {
-      const targetDate = new Date(formData.targetDate);
+      const targetDate = createLocalDate(formData.targetDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
@@ -133,7 +133,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({
     if (!formData.targetAmount || !formData.targetDate) return 0;
     
     const targetAmount = parseFloat(formData.targetAmount);
-    const targetDate = new Date(formData.targetDate);
+    const targetDate = createLocalDate(formData.targetDate);
     const now = new Date();
     const monthsRemaining = Math.max(1, Math.ceil((targetDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 30)));
     const currentAmount = editGoal?.currentAmount || 0;

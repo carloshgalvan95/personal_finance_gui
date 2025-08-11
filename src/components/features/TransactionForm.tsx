@@ -27,6 +27,7 @@ import type {
   TransactionForm as TransactionFormData,
 } from '../../types';
 import { CategoryService } from '../../services/transactionService';
+import { formatDateForInput } from '../../utils';
 
 interface TransactionFormProps {
   open: boolean;
@@ -49,8 +50,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     category: transaction?.category || '',
     description: transaction?.description || '',
     date: transaction
-      ? new Date(transaction.date).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0],
+      ? formatDateForInput(new Date(transaction.date))
+      : formatDateForInput(new Date()),
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -146,7 +147,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         amount: '',
         category: '',
         description: '',
-        date: new Date().toISOString().split('T')[0],
+        date: formatDateForInput(new Date()),
       });
       setErrors({});
     }
@@ -245,7 +246,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
               label="Category"
             >
               {categories.map((category) => (
-                <MenuItem key={category.id} value={category.name}>
+                <MenuItem key={category.id} value={category.id}>
                   {category.name}
                 </MenuItem>
               ))}

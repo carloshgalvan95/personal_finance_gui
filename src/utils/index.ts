@@ -13,6 +13,31 @@ export const formatCurrency = (amount: number, currency = 'USD'): string => {
 };
 
 /**
+ * Create a date from a date string without timezone issues
+ * For date inputs (YYYY-MM-DD), we want to create a date in local timezone
+ */
+export const createLocalDate = (dateString: string): Date => {
+  // If it's already a full date string with time, use it as is
+  if (dateString.includes('T')) {
+    return new Date(dateString);
+  }
+  
+  // For date-only strings (YYYY-MM-DD), add noon time to avoid timezone issues
+  return new Date(dateString + 'T12:00:00');
+};
+
+/**
+ * Convert a Date object to YYYY-MM-DD format for HTML date inputs
+ * Uses local timezone to avoid date shifting
+ */
+export const formatDateForInput = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+/**
  * Format date
  */
 export const formatDate = (date: Date | string, format = 'short'): string => {

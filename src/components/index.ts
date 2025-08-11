@@ -11,6 +11,7 @@ export { ProtectedRoute } from './auth/ProtectedRoute';
 // Feature Components
 export { TransactionForm } from './features/TransactionForm';
 export { TransactionList } from './features/TransactionList';
+export { AdvancedFilters } from './features/AdvancedFilters';
 export { BudgetForm } from './features/BudgetForm';
 export { BudgetList } from './features/BudgetList';
 export { GoalForm } from './features/GoalForm';
@@ -27,3 +28,10 @@ export { RecentTransactions } from './dashboard/RecentTransactions';
 export { BudgetOverview } from './dashboard/BudgetOverview';
 export { GoalsProgress } from './dashboard/GoalsProgress';
 export { SpendingByCategory } from './dashboard/SpendingByCategory';
+
+// Chart Components
+export { SpendingTrendsChart } from './charts/SpendingTrendsChart';
+export { CategoryBreakdownChart } from './charts/CategoryBreakdownChart';
+export { MonthlyComparisonChart } from './charts/MonthlyComparisonChart';
+export { BudgetProgressChart } from './charts/BudgetProgressChart';
+export { FinancialHealthScore } from './charts/FinancialHealthScore';

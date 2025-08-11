@@ -5,7 +5,6 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText,
   Avatar,
   Chip,
   Button,
@@ -101,36 +100,32 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
               </Avatar>
             </ListItemAvatar>
             
-            <ListItemText
-              primary={
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body2" fontWeight="medium">
-                    {transaction.description}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fontWeight="medium"
-                    color={transaction.type === 'income' ? 'success.main' : 'error.main'}
-                  >
-                    {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(transaction.amount)}
-                  </Typography>
-                </Box>
-              }
-              secondary={
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
-                  <Chip
-                    label={transaction.category}
-                    size="small"
-                    variant="outlined"
-                    sx={{ fontSize: '0.75rem', height: 20 }}
-                  />
-                  <Typography variant="caption" color="text.secondary">
-                    {formatDate(new Date(transaction.date))}
-                  </Typography>
-                </Box>
-              }
-            />
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" fontWeight="medium">
+                  {transaction.description}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight="medium"
+                  color={transaction.type === 'income' ? 'success.main' : 'error.main'}
+                >
+                  {transaction.type === 'income' ? '+' : '-'}
+                  {formatCurrency(transaction.amount)}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
+                <Chip
+                  label={transaction.category}
+                  size="small"
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: 20 }}
+                />
+                <Typography variant="caption" color="text.secondary">
+                  {formatDate(new Date(transaction.date))}
+                </Typography>
+              </Box>
+            </Box>
           </ListItem>
         ))}
       </List>
