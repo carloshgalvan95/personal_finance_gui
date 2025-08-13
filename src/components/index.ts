@@ -22,6 +22,7 @@ export { DataManagement } from './features/DataManagement';
 export { LoadingSpinner } from './common/LoadingSpinner';
 export { EmptyState } from './common/EmptyState';
 export { PageHeader } from './common/PageHeader';
+export { AppLogo, AppIcon } from './common/AppLogo';
 
 // Dashboard Components
 export { RecentTransactions } from './dashboard/RecentTransactions';

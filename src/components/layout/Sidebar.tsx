@@ -22,6 +22,7 @@ import {
   AccountBalanceWallet,
   GpsFixed,
 } from '@mui/icons-material';
+import { AppLogo } from '../common/AppLogo';
 
 interface SidebarProps {
   onItemClick?: () => void;
@@ -152,19 +153,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Toolbar>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Avatar sx={{ bgcolor: 'primary.main' }}>
-            <AccountBalanceWallet />
-          </Avatar>
-          <Box>
-            <Typography variant="h6" noWrap>
-              Finance
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Personal Dashboard
-            </Typography>
-          </Box>
+      <Toolbar sx={{ py: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+          <AppLogo size="medium" showText={true} variant="primary" />
         </Box>
       </Toolbar>
 

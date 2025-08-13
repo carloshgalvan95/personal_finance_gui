@@ -17,6 +17,7 @@ import {
   NotificationsNone,
 } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
+import { AppIcon } from '../common/AppLogo';
 
 export const Header: React.FC = () => {
   const { state, logout } = useAuth();
@@ -61,9 +62,12 @@ export const Header: React.FC = () => {
       }}
     >
       {/* App Title */}
-      <Typography variant="h6" noWrap component="div">
-        Personal Finance
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <AppIcon size={32} variant="primary" />
+        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 600 }}>
+          Personal Finance
+        </Typography>
+      </Box>
 
       {/* Right side actions */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
