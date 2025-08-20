@@ -179,34 +179,142 @@ export const Investments: React.FC = () => {
         />
       </Box>
 
-      {/* Market Overview Cards */}
+      {/* Market Overview List */}
       {marketData.length > 0 && (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
-          {marketData.map((asset) => {
-            return (
-              <Box key={asset.symbol}>
-                <Card className="glass-card" sx={{ height: '100%' }}>
-                  <CardContent sx={{ p: 2 }}>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      {asset.symbol}
-                    </Typography>
-                    <Typography variant="h6" fontWeight="bold">
+        <Card className="glass-card" sx={{ mb: 3 }}>
+          <CardContent sx={{ p: 0 }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+              <Typography variant="h6" fontWeight="bold">
+                Market Data
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Live prices for popular assets
+              </Typography>
+            </Box>
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(6, 1fr)' }, 
+              border: '1px solid',
+              borderColor: 'divider',
+              '& > *': {
+                borderLeft: '1px solid',
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                position: 'relative',
+              },
+              '& > *:nth-of-type(1), & > *:nth-of-type(2)': { 
+                borderTop: { xs: 'none' } 
+              },
+              '& > *:nth-of-type(1), & > *:nth-of-type(2), & > *:nth-of-type(3)': { 
+                borderTop: { sm: 'none' } 
+              },
+              '& > *:nth-of-type(1), & > *:nth-of-type(2), & > *:nth-of-type(3), & > *:nth-of-type(4)': { 
+                borderTop: { md: 'none' } 
+              },
+              '& > *:nth-of-type(1), & > *:nth-of-type(2), & > *:nth-of-type(3), & > *:nth-of-type(4), & > *:nth-of-type(5), & > *:nth-of-type(6)': { 
+                borderTop: { lg: 'none' } 
+              },
+              '& > *:nth-of-type(2n+1)': { 
+                borderLeft: { xs: 'none' } 
+              },
+              '& > *:nth-of-type(3n+1)': { 
+                borderLeft: { sm: 'none' } 
+              },
+              '& > *:nth-of-type(4n+1)': { 
+                borderLeft: { md: 'none' } 
+              },
+              '& > *:nth-of-type(6n+1)': { 
+                borderLeft: { lg: 'none' } 
+              },
+            }}>
+              {marketData.map((asset) => {
+                const isPositive = asset.changePercent >= 0;
+                const assetInfo = MarketDataService.getAssetInfo(asset.symbol);
+                const assetType = assetInfo?.type || 'stock';
+                
+                // Color coding by asset type
+                const getAssetColor = () => {
+                  switch (assetType) {
+                    case 'etf': return '#1976d2'; // Blue
+                    case 'cryptocurrency': return '#ff9800'; // Orange  
+                    case 'stock': return '#4caf50'; // Green
+                    default: return '#9c27b0'; // Purple
+                  }
+                };
+
+                return (
+                  <Box 
+                    key={asset.symbol}
+                    sx={{ 
+                      p: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        bgcolor: 'action.hover',
+                        transform: 'translateY(-1px)',
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <Box 
+                        sx={{ 
+                          width: 8, 
+                          height: 8, 
+                          borderRadius: '50%', 
+                          bgcolor: getAssetColor(),
+                          flexShrink: 0
+                        }} 
+                      />
+                      <Typography 
+                        variant="body2" 
+                        fontWeight="bold"
+                        sx={{ 
+                          color: getAssetColor(),
+                          fontSize: '0.875rem'
+                        }}
+                      >
+                        {asset.symbol}
+                      </Typography>
+                    </Box>
+                    
+                    <Typography 
+                      variant="body1" 
+                      fontWeight="bold" 
+                      sx={{ mb: 0.5, fontSize: '1rem' }}
+                    >
                       {formatCurrency(asset.price)}
                     </Typography>
-                    <Typography 
-                      variant="body2" 
-                      color={asset.changePercent >= 0 ? 'success.main' : 'error.main'}
-                      sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-                    >
-                      {asset.changePercent >= 0 ? <TrendingUp fontSize="small" /> : <TrendingUp fontSize="small" style={{ transform: 'rotate(180deg)' }} />}
-                      {formatPercent(asset.changePercent)}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-            );
-          })}
-        </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Box 
+                        sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 0.25,
+                          color: isPositive ? '#4caf50' : '#f44336',
+                          bgcolor: isPositive ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
+                          px: 0.75,
+                          py: 0.25,
+                          borderRadius: 1,
+                          fontSize: '0.75rem'
+                        }}
+                      >
+                        {isPositive ? (
+                          <TrendingUp sx={{ fontSize: '0.875rem' }} />
+                        ) : (
+                          <TrendingUp sx={{ fontSize: '0.875rem', transform: 'rotate(180deg)' }} />
+                        )}
+                        <Typography variant="caption" fontWeight="bold">
+                          {formatPercent(asset.changePercent)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          </CardContent>
+        </Card>
       )}
 
       {!hasInvestments ? (
