@@ -309,14 +309,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Carlos Galvan**
 - GitHub: [@carloshgalvan95](https://github.com/carloshgalvan95)
 - Email: [your-email@example.com](mailto:your-email@example.com)
+- LinkedIn: [@carloshgalvan](https://www.linkedin.com/in/carloshgalvan)
 
-## 🙏 Acknowledgments
 
-- **Material-UI Team** - Excellent component library
-- **React Team** - Amazing framework
-- **Vite Team** - Lightning-fast build tool
-- **Chart.js** - Beautiful charts and graphs
-- **Yahoo Finance & CoinGecko** - Real-time market data
 
 ## 🔗 Links
 
@@ -329,7 +324,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Built with ❤️ by Carlos Galvan**
+**Built by Carlos Galvan**
 
 ⭐ If you found this project helpful, please give it a star!
 
