@@ -11,6 +11,7 @@ import {
   Skeleton,
 } from '@mui/material';
 import { financialChartOptions } from './ChartConfig';
+import { MarketDataService } from '../../services/marketDataService';
 import type { AssetPrice } from '../../types';
 
 interface InvestmentPriceChartProps {
@@ -41,67 +42,97 @@ export const InvestmentPriceChart: React.FC<InvestmentPriceChartProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    generateMockPriceHistory();
+    loadPriceHistory();
   }, [symbol, timeFrame, currentPrice]);
 
-  const generateMockPriceHistory = () => {
+  const loadPriceHistory = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Generate mock historical data based on current price and timeframe
-      const currentPriceValue = currentPrice?.price || averageCost;
-      const dataPoints = getDataPointsForTimeFrame(timeFrame);
-      let history: PricePoint[] = [];
+      // Convert timeframe to API format
+      const apiTimeframe = timeFrame === '1D' ? '1d' : 
+                          timeFrame === '1W' ? '1w' : 
+                          timeFrame === '1M' ? '1m' : 
+                          timeFrame === '3M' ? '3m' : 
+                          timeFrame === '6M' ? '3m' : 
+                          timeFrame === '1Y' ? '1y' : '1m';
 
-      // Generate realistic price movement working backwards from current price
-      const volatility = getVolatilityForSymbol(symbol);
-      
-      // Start from current price and work backwards to create smooth progression
-      let basePrice = currentPriceValue;
-      const priceHistory: PricePoint[] = [];
-
-      for (let i = 0; i <= dataPoints; i++) {
-        const date = getDateForTimeFrame(timeFrame, dataPoints - i);
-        
-        if (i === 0) {
-          // Current/most recent data point
-          priceHistory.push({
-            date: date.toISOString(),
-            price: currentPriceValue,
-            change: currentPrice?.change || 0,
-            changePercent: currentPrice?.changePercent || 0,
-          });
-        } else {
-          // Generate realistic price variation for historical points
-          const randomChange = (Math.random() - 0.5) * volatility;
-          const trendFactor = getTrendFactor(symbol, timeFrame, dataPoints - i, dataPoints);
-          
-          // Work backwards: previous price should be slightly different
-          basePrice = basePrice / (1 + randomChange + trendFactor);
-          
-          // Ensure price doesn't go negative
-          basePrice = Math.max(basePrice, averageCost * 0.3);
-
-          priceHistory.push({
-            date: date.toISOString(),
-            price: basePrice,
-            change: 0,
-            changePercent: 0,
-          });
-        }
+      // Try to get real historical data first
+      let historicalData;
+      try {
+        historicalData = await MarketDataService.fetchHistoricalData(symbol, apiTimeframe);
+      } catch (apiError) {
+        console.warn(`Failed to fetch real data for ${symbol}, falling back to mock data:`, apiError);
+        historicalData = generateFallbackData();
       }
 
-      // Reverse to get chronological order (oldest to newest)
-      history = priceHistory.reverse();
+      // Convert to our PricePoint format
+      const history: PricePoint[] = historicalData.map((item: any) => ({
+        date: item.date,
+        price: item.price,
+        change: 0, // Historical data doesn't include daily changes
+        changePercent: 0,
+      }));
+
+      // Add current price as the most recent point if available
+      if (currentPrice && history.length > 0) {
+        // Update the last point with current data
+        history[history.length - 1] = {
+          date: new Date().toISOString().split('T')[0],
+          price: currentPrice.price,
+          change: currentPrice.change,
+          changePercent: currentPrice.changePercent,
+        };
+      }
 
       setPriceHistory(history);
     } catch (error) {
-      console.error('Error generating price history:', error);
+      console.error('Error loading price history:', error);
       setError('Failed to load price history');
+      
+      // Fallback to mock data
+      const fallbackData = generateFallbackData();
+      const history: PricePoint[] = fallbackData.map((item: any) => ({
+        date: item.date,
+        price: item.price,
+        change: 0,
+        changePercent: 0,
+      }));
+      setPriceHistory(history);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const generateFallbackData = () => {
+    // Generate mock historical data as fallback
+    const currentPriceValue = currentPrice?.price || averageCost;
+    const dataPoints = getDataPointsForTimeFrame(timeFrame);
+    const volatility = getVolatilityForSymbol(symbol);
+    
+    const data = [];
+    let basePrice = currentPriceValue;
+    
+    for (let i = dataPoints; i >= 0; i--) {
+      const date = getDateForTimeFrame(timeFrame, i);
+      
+      if (i > 0) {
+        const randomChange = (Math.random() - 0.5) * volatility;
+        const trendFactor = getTrendFactor(symbol, timeFrame, i, dataPoints);
+        basePrice = basePrice / (1 + randomChange + trendFactor);
+        basePrice = Math.max(basePrice, averageCost * 0.3);
+      } else {
+        basePrice = currentPriceValue;
+      }
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        price: basePrice,
+      });
+    }
+    
+    return data;
   };
 
   const getDataPointsForTimeFrame = (tf: TimeFrame): number => {

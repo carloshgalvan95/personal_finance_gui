@@ -5,21 +5,55 @@ export class MarketDataService {
   // Cache for storing fetched data to avoid repeated API calls
   private static cache = new Map<string, { data: AssetPrice; timestamp: number }>();
   private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  
+  // Rate limiting
+  private static lastRequestTime = 0;
+  private static readonly MIN_REQUEST_INTERVAL = 100; // 100ms between requests
+  
+  // Retry configuration
+  private static readonly MAX_RETRIES = 3;
+  private static readonly RETRY_DELAY = 1000; // 1 second base delay
 
-  // Your specific ETF symbols
-  static readonly ETF_SYMBOLS = {
+  // Popular investment symbols
+  static readonly INVESTMENT_SYMBOLS = {
+    // ETFs
     VOO: 'VOO',      // Vanguard S&P 500 ETF
     VT: 'VT',        // Vanguard Total World Stock ETF
     GLD: 'GLD',      // SPDR Gold Trust
     QQQ: 'QQQ',      // Invesco QQQ Trust
+    VTI: 'VTI',      // Vanguard Total Stock Market ETF
+    VXUS: 'VXUS',    // Vanguard Total International Stock ETF
+    BND: 'BND',      // Vanguard Total Bond Market ETF
+    
+    // Popular Stocks
+    AAPL: 'AAPL',    // Apple Inc.
+    MSFT: 'MSFT',    // Microsoft Corporation
+    GOOGL: 'GOOGL',  // Alphabet Inc.
+    AMZN: 'AMZN',    // Amazon.com Inc.
+    TSLA: 'TSLA',    // Tesla Inc.
+    NVDA: 'NVDA',    // NVIDIA Corporation
   };
 
   // Asset information with full names
   static readonly ASSET_INFO: Record<string, { name: string; type: 'etf' | 'cryptocurrency' | 'stock' }> = {
+    // ETFs
     VOO: { name: 'Vanguard S&P 500 ETF', type: 'etf' },
     VT: { name: 'Vanguard Total World Stock ETF', type: 'etf' },
     GLD: { name: 'SPDR Gold Trust', type: 'etf' },
     QQQ: { name: 'Invesco QQQ Trust', type: 'etf' },
+    VTI: { name: 'Vanguard Total Stock Market ETF', type: 'etf' },
+    VXUS: { name: 'Vanguard Total International Stock ETF', type: 'etf' },
+    BND: { name: 'Vanguard Total Bond Market ETF', type: 'etf' },
+    
+    // Stocks
+    AAPL: { name: 'Apple Inc.', type: 'stock' },
+    MSFT: { name: 'Microsoft Corporation', type: 'stock' },
+    GOOGL: { name: 'Alphabet Inc.', type: 'stock' },
+    AMZN: { name: 'Amazon.com Inc.', type: 'stock' },
+    TSLA: { name: 'Tesla Inc.', type: 'stock' },
+    NVDA: { name: 'NVIDIA Corporation', type: 'stock' },
+    
+    // Cryptocurrencies
     BTC: { name: 'Bitcoin', type: 'cryptocurrency' },
     'BTC-USD': { name: 'Bitcoin', type: 'cryptocurrency' },
   };
@@ -29,6 +63,42 @@ export class MarketDataService {
    */
   private static isCacheValid(timestamp: number): boolean {
     return Date.now() - timestamp < this.CACHE_DURATION;
+  }
+
+  /**
+   * Rate limiting - ensure minimum interval between requests
+   */
+  private static async enforceRateLimit(): Promise<void> {
+    const now = Date.now();
+    const timeSinceLastRequest = now - this.lastRequestTime;
+    
+    if (timeSinceLastRequest < this.MIN_REQUEST_INTERVAL) {
+      const waitTime = this.MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    this.lastRequestTime = Date.now();
+  }
+
+  /**
+   * Retry mechanism with exponential backoff
+   */
+  private static async retryRequest<T>(
+    requestFn: () => Promise<T>,
+    retries: number = this.MAX_RETRIES
+  ): Promise<T> {
+    try {
+      await this.enforceRateLimit();
+      return await requestFn();
+    } catch (error) {
+      if (retries > 0) {
+        const delay = this.RETRY_DELAY * (this.MAX_RETRIES - retries + 1); // Exponential backoff
+        console.log(`Request failed, retrying in ${delay}ms... (${retries} retries left)`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.retryRequest(requestFn, retries - 1);
+      }
+      throw error;
+    }
   }
 
   /**
@@ -51,7 +121,7 @@ export class MarketDataService {
 
   /**
    * Fetch ETF/Stock price from Yahoo Finance API (free, no API key required)
-   * Using a proxy service to avoid CORS issues
+   * Enhanced with retry mechanism and rate limiting
    */
   static async fetchETFPrice(symbol: string): Promise<AssetPrice> {
     const cached = this.getCachedData(symbol);
@@ -60,16 +130,17 @@ export class MarketDataService {
     }
 
     try {
-      // Using Yahoo Finance API through a public proxy
-      const response = await axios.get(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`,
-        {
-          timeout: 10000,
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      const response = await this.retryRequest(async () => {
+        return await axios.get(
+          `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`,
+          {
+            timeout: 10000,
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
           }
-        }
-      );
+        );
+      });
 
       const result = response.data?.chart?.result?.[0];
       if (!result) {
@@ -113,6 +184,7 @@ export class MarketDataService {
 
   /**
    * Fetch Bitcoin price from CoinGecko API (free, no API key required)
+   * Enhanced with retry mechanism and rate limiting
    */
   static async fetchBitcoinPrice(): Promise<AssetPrice> {
     const cached = this.getCachedData('BTC');
@@ -121,10 +193,12 @@ export class MarketDataService {
     }
 
     try {
-      const response = await axios.get(
-        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_market_cap=true',
-        { timeout: 10000 }
-      );
+      const response = await this.retryRequest(async () => {
+        return await axios.get(
+          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_market_cap=true',
+          { timeout: 10000 }
+        );
+      });
 
       const btcData = response.data.bitcoin;
       if (!btcData) {
@@ -198,19 +272,19 @@ export class MarketDataService {
   }
 
   /**
-   * Fetch all your investment prices (ETFs + Bitcoin)
+   * Fetch all popular investment prices (ETFs, Stocks + Bitcoin)
    */
   static async fetchAllInvestmentPrices(): Promise<AssetPrice[]> {
     try {
-      const etfSymbols = Object.values(this.ETF_SYMBOLS);
+      const investmentSymbols = Object.values(this.INVESTMENT_SYMBOLS);
       
-      // Fetch ETFs and Bitcoin in parallel
-      const [etfPrices, bitcoinPrice] = await Promise.all([
-        this.fetchMultipleETFPrices(etfSymbols),
+      // Fetch all investments and Bitcoin in parallel
+      const [investmentPrices, bitcoinPrice] = await Promise.all([
+        this.fetchMultipleETFPrices(investmentSymbols),
         this.fetchBitcoinPrice(),
       ]);
 
-      return [...etfPrices, bitcoinPrice];
+      return [...investmentPrices, bitcoinPrice];
     } catch (error) {
       console.error('Error fetching all investment prices:', error);
       return [];
@@ -218,18 +292,61 @@ export class MarketDataService {
   }
 
   /**
-   * Get historical data for an asset (simplified version)
-   * This would typically require a more sophisticated API
+   * Get historical data for an asset using Yahoo Finance API
    */
   static async fetchHistoricalData(symbol: string, period: '1d' | '1w' | '1m' | '3m' | '1y' = '1m'): Promise<any[]> {
     try {
-      // For now, return mock historical data
-      // In a real implementation, you would fetch from Yahoo Finance historical API
-      const mockData = this.generateMockHistoricalData(symbol, period);
-      return mockData;
+      // Convert period to Yahoo Finance format
+      const periodMap = {
+        '1d': { range: '1d', interval: '5m' },
+        '1w': { range: '5d', interval: '1h' },
+        '1m': { range: '1mo', interval: '1d' },
+        '3m': { range: '3mo', interval: '1d' },
+        '1y': { range: '1y', interval: '1wk' }
+      };
+
+      const { range, interval } = periodMap[period];
+
+      const response = await axios.get(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`,
+        {
+          params: {
+            range,
+            interval,
+            includePrePost: false,
+            events: 'div,splits'
+          },
+          timeout: 15000,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        }
+      );
+
+      const result = response.data?.chart?.result?.[0];
+      if (!result || !result.timestamp) {
+        throw new Error('Invalid historical data response');
+      }
+
+      const timestamps = result.timestamp;
+      const prices = result.indicators?.quote?.[0]?.close || [];
+      const volumes = result.indicators?.quote?.[0]?.volume || [];
+
+      // Convert to our format
+      const historicalData = timestamps.map((timestamp: number, index: number) => ({
+        date: new Date(timestamp * 1000).toISOString().split('T')[0],
+        price: prices[index] || 0,
+        volume: volumes[index] || 0,
+      })).filter((item: any) => item.price > 0); // Filter out invalid prices
+
+      return historicalData;
+
     } catch (error) {
       console.error(`Error fetching historical data for ${symbol}:`, error);
-      return [];
+      
+      // Fallback to mock data if real API fails
+      console.log(`Falling back to mock data for ${symbol}`);
+      return this.generateMockHistoricalData(symbol, period);
     }
   }
 
