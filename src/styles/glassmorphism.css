@@ -1,0 +1,846 @@
+/* Modern Glassmorphism - Arc Browser Style */
+
+/* Global background with pattern for glassmorphism effect */
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%) !important;
+  min-height: 100vh;
+}
+
+[data-theme='dark'] body {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%) !important;
+}
+
+/* Global icon visibility improvements */
+.MuiSvgIcon-root {
+  color: rgba(15, 23, 42, 0.8) !important;
+  transition: color 0.3s ease, filter 0.3s ease !important;
+}
+
+[data-theme='dark'] .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Add noise texture for better glassmorphism */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(14, 165, 233, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-theme='dark'] body::before {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+/* Perfect glassmorphism cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 20px !important;
+  box-shadow: 
+    0 8px 32px rgba(15, 23, 42, 0.08),
+    0 4px 16px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme='dark'] .glass-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+  transform: translateY(-4px);
+  box-shadow: 
+    0 20px 40px rgba(15, 23, 42, 0.12),
+    0 8px 24px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-theme='dark'] .glass-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Navigation glassmorphism */
+.glass-sidebar {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-theme='dark'] .glass-sidebar {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.glass-header {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-theme='dark'] .glass-header {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Button glassmorphism */
+.glass-button {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: inherit !important;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .glass-button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme='dark'] .glass-button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Modern Responsive Grid System - Inspired by leading financial apps */
+
+/* Base card styling - adapts to content */
+.glass-card {
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  padding: 1rem !important;
+}
+
+/* Global Layout Foundation - Prevents Content Overflow */
+* {
+  box-sizing: border-box !important;
+}
+
+/* Global Content Boundaries */
+.modern-stat-card,
+.modern-dashboard-card,
+.glass-card {
+  overflow: hidden !important;
+  word-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+/* Content-First Responsive Approach */
+
+/* 1. Protect icons from distortion only */
+.modern-stat-card .MuiAvatar-root,
+.modern-dashboard-card .MuiAvatar-root,
+.glass-card .MuiAvatar-root {
+  flex-shrink: 0 !important;
+}
+
+.modern-stat-card .MuiSvgIcon-root,
+.modern-dashboard-card .MuiSvgIcon-root,
+.glass-card .MuiSvgIcon-root {
+  flex-shrink: 0 !important;
+}
+
+/* 2. Allow natural text flow - content determines container size */
+.modern-stat-card,
+.modern-dashboard-card,
+.glass-card {
+  /* Let content breathe naturally */
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 3. Smart padding that adapts without constraining content */
+.modern-stat-card .MuiCardContent-root {
+  padding: clamp(1rem, 3vw, 1.5rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+}
+
+.modern-dashboard-card .MuiCardContent-root {
+  padding: clamp(1rem, 3vw, 1.5rem) !important;
+}
+
+/* 4. Gentle text scaling that preserves readability */
+.modern-stat-card .MuiTypography-root,
+.modern-dashboard-card .MuiTypography-root {
+  /* Let text wrap naturally when needed */
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Modern Stat Cards */
+.modern-stat-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  min-height: 140px !important;
+  height: auto !important;
+  position: relative !important;
+}
+
+.modern-stat-card:hover {
+  background: rgba(255, 255, 255, 0.98) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme='dark'] .modern-stat-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme='dark'] .modern-stat-card:hover {
+  background: rgba(30, 41, 59, 0.98) !important;
+}
+
+/* Modern Dashboard Cards */
+.modern-dashboard-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  height: 100% !important;
+}
+
+.modern-dashboard-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme='dark'] .modern-dashboard-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Modern Action Buttons */
+.modern-action-button {
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border: 2px solid rgba(102, 126, 234, 0.2) !important;
+  color: #667eea !important;
+  transition: all 0.3s ease !important;
+}
+
+.modern-action-button:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border-color: transparent !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+/* Chart cards - responsive height based on content */
+.dashboard-chart-card {
+  min-height: clamp(200px, 40vh, 350px) !important;
+  height: auto !important;
+  padding: clamp(0.75rem, 2vw, 1.25rem) !important;
+  overflow: hidden !important;
+}
+
+/* List cards - flexible height */
+.dashboard-list-card {
+  min-height: clamp(180px, 35vh, 300px) !important;
+  height: auto !important;
+  max-height: clamp(300px, 50vh, 450px) !important;
+  overflow-y: auto !important;
+  padding: clamp(0.75rem, 2vw, 1.25rem) !important;
+}
+
+/* Responsive typography system */
+.glass-card .MuiTypography-h3 {
+  font-weight: 700 !important;
+  font-size: clamp(1rem, 2.5vw, 1.5rem) !important;
+  line-height: 1.2 !important;
+  color: rgba(15, 23, 42, 0.95) !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  margin: 0 !important;
+}
+
+.glass-card .MuiTypography-h6 {
+  font-weight: 600 !important;
+  color: rgba(15, 23, 42, 0.8) !important;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem) !important;
+  line-height: 1.3 !important;
+  margin: 0 0 0.25rem 0 !important;
+}
+
+.glass-card .MuiTypography-body2 {
+  font-weight: 500 !important;
+  color: rgba(15, 23, 42, 0.7) !important;
+  font-size: clamp(0.625rem, 1vw, 0.75rem) !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+/* Dashboard stat card specific typography */
+.dashboard-stat-card .MuiTypography-h3 {
+  font-size: clamp(1.1rem, 3vw, 1.75rem) !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-stat-card .MuiTypography-h6 {
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem) !important;
+  opacity: 0.8 !important;
+}
+
+.dashboard-stat-card .MuiTypography-body2 {
+  font-size: clamp(0.6rem, 1vw, 0.7rem) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiTypography-h3 {
+  color: rgba(255, 255, 255, 0.98) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] .glass-card .MuiTypography-h6 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiTypography-body2 {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Icon styling for better visibility */
+.glass-card .MuiSvgIcon-root {
+  color: rgba(15, 23, 42, 0.8) !important;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.5));
+}
+
+[data-theme='dark'] .glass-card .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.9) !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Avatar and icon containers */
+.glass-card .MuiAvatar-root {
+  backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.1) !important;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  width: clamp(48px, 8vw, 64px) !important;
+  height: clamp(48px, 8vw, 64px) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiAvatar-root {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Icon buttons and containers */
+.glass-card .MuiIconButton-root {
+  color: rgba(15, 23, 42, 0.8) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiIconButton-root {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Specific styling for dashboard stat cards */
+.dashboard-stat-card .MuiSvgIcon-root {
+  color: rgba(15, 23, 42, 0.85) !important;
+  font-size: clamp(1.5rem, 3vw, 2.5rem) !important;
+}
+
+[data-theme='dark'] .dashboard-stat-card .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Material-UI component icon overrides for light mode */
+.MuiCardContent-root .MuiSvgIcon-root {
+  color: rgba(15, 23, 42, 0.8) !important;
+}
+
+[data-theme='dark'] .MuiCardContent-root .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Chip icons */
+.glass-card .MuiChip-icon {
+  color: rgba(15, 23, 42, 0.8) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiChip-icon {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* List item icons */
+.glass-card .MuiListItemIcon-root .MuiSvgIcon-root {
+  color: rgba(15, 23, 42, 0.8) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiListItemIcon-root .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Button icons */
+.glass-card .MuiButton-root .MuiSvgIcon-root {
+  color: inherit !important;
+}
+
+/* Box component icons (for dashboard cards) */
+.glass-card .MuiBox-root .MuiSvgIcon-root {
+  color: rgba(15, 23, 42, 0.85) !important;
+}
+
+[data-theme='dark'] .glass-card .MuiBox-root .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Sidebar Navigation Tab Improvements */
+.MuiListItemButton-root {
+  min-height: 48px !important;
+  padding: 8px 16px !important;
+  margin: 4px 8px !important;
+  border-radius: 12px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.MuiListItemButton-root .MuiListItemIcon-root {
+  min-width: 40px !important;
+  margin-right: 12px !important;
+}
+
+.MuiListItemButton-root .MuiListItemText-root {
+  margin: 0 !important;
+}
+
+.MuiListItemButton-root .MuiListItemText-primary {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+/* Selected state improvements */
+.MuiListItemButton-root.Mui-selected {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  box-shadow: 
+    0 4px 12px rgba(25, 118, 210, 0.3),
+    0 2px 4px rgba(25, 118, 210, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.MuiListItemButton-root.Mui-selected .MuiListItemText-primary {
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.MuiListItemButton-root.Mui-selected .MuiSvgIcon-root {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Hover state improvements */
+.MuiListItemButton-root:hover:not(.Mui-selected) {
+  background: rgba(25, 118, 210, 0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme='dark'] .MuiListItemButton-root:hover:not(.Mui-selected) {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Ensure consistent icon sizing in sidebar */
+.MuiListItemButton-root .MuiSvgIcon-root {
+  font-size: 1.25rem !important;
+  transition: color 0.2s ease !important;
+}
+
+/* Typography consistency */
+.MuiListItemText-root .MuiTypography-root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  letter-spacing: 0.025em !important;
+}
+
+/* List container improvements */
+.MuiList-root {
+  padding: 8px 0 !important;
+}
+
+.MuiListItem-root {
+  padding: 0 !important;
+  margin-bottom: 2px !important;
+}
+
+/* Ensure all tabs have the same width */
+.MuiListItemButton-root {
+  width: calc(100% - 16px) !important;
+  box-sizing: border-box !important;
+}
+
+/* Remove any conflicting background colors */
+.sidebar-nav-button {
+  background: transparent !important;
+}
+
+.sidebar-nav-button:hover {
+  background: rgba(25, 118, 210, 0.08) !important;
+}
+
+[data-theme='dark'] .sidebar-nav-button:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.sidebar-nav-button.Mui-selected {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+}
+
+/* Specific adjustments for section headers */
+.MuiTypography-overline {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  opacity: 0.7 !important;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Analytics and chart specific improvements */
+.analytics-chart-container {
+  padding: 16px !important;
+  margin: 8px 0 !important;
+}
+
+.analytics-chart-container .glass-card {
+  padding: 20px !important;
+  min-height: 350px !important;
+}
+
+/* Better grid spacing for dashboard */
+.dashboard-grid {
+  gap: 12px !important;
+}
+
+.dashboard-grid .glass-card {
+  margin: 0 !important;
+}
+
+/* Modern Dashboard Design System - 2024 */
+
+/* Modern Dashboard Container */
+.modern-dashboard-container {
+  padding: clamp(1rem, 3vw, 2rem) !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  min-height: 100vh !important;
+}
+
+/* Dashboard Header Section */
+.dashboard-header-section {
+  margin-bottom: clamp(2rem, 4vw, 3rem) !important;
+}
+
+/* Modern Stats Grid */
+.modern-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: clamp(1rem, 2.5vw, 1.5rem) !important;
+  margin-bottom: clamp(2rem, 4vw, 3rem) !important;
+}
+
+/* Modern Content Grid */
+.modern-content-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+  gap: clamp(1.5rem, 3vw, 2rem) !important;
+  align-items: start !important;
+}
+
+/* Modern Card Wrapper */
+.modern-card-wrapper {
+  height: 100% !important;
+}
+
+/* Analytics grid layout (keep existing) */
+.analytics-chart-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1.5rem !important;
+}
+
+/* Natural Typography Scaling - Let content flow naturally */
+.modern-stat-card .MuiTypography-h6,
+.modern-dashboard-card .MuiTypography-h6 {
+  font-size: clamp(0.8rem, 2vw, 1rem) !important;
+  line-height: 1.3 !important;
+}
+
+.modern-stat-card .MuiTypography-h3,
+.modern-dashboard-card .MuiTypography-h3 {
+  font-size: clamp(1.25rem, 4vw, 2rem) !important;
+  line-height: 1.2 !important;
+}
+
+.modern-stat-card .MuiTypography-body2,
+.modern-dashboard-card .MuiTypography-body2 {
+  font-size: clamp(0.7rem, 1.5vw, 0.875rem) !important;
+  line-height: 1.4 !important;
+}
+
+/* Modern Responsive Breakpoints */
+@media (max-width: 576px) {
+  .modern-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .modern-content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .modern-dashboard-container {
+    padding: 1rem !important;
+  }
+  
+  .modern-stat-card {
+    min-height: 120px !important;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .modern-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .modern-content-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .modern-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .modern-content-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+  .modern-stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .modern-content-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (min-width: 1201px) {
+  .modern-stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .modern-content-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* Analytics grid adjustments (keep existing) */
+@media (min-width: 768px) {
+  .analytics-chart-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important;
+  }
+}
+
+/* Compact mode for analytics tabs */
+.analytics-tab-content {
+  padding: 16px 0 !important;
+}
+
+.analytics-tab-content .glass-card {
+  margin-bottom: 16px !important;
+}
+
+/* Chart container optimizations */
+.chart-container {
+  padding: clamp(8px, 1.5vw, 16px) !important;
+  min-height: clamp(200px, 35vh, 300px) !important;
+  max-height: clamp(300px, 45vh, 400px) !important;
+  overflow: hidden !important;
+}
+
+/* Chart.js canvas improvements */
+.glass-card canvas {
+  max-height: clamp(250px, 40vh, 350px) !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Better chart spacing */
+.glass-card .recharts-wrapper,
+.glass-card .recharts-surface {
+  width: 100% !important;
+  height: auto !important;
+  max-height: clamp(250px, 40vh, 350px) !important;
+}
+
+/* Analytics specific chart improvements */
+.analytics-tab-content canvas {
+  max-height: clamp(220px, 35vh, 320px) !important;
+}
+
+.analytics-tab-content .chart-container {
+  min-height: clamp(180px, 30vh, 280px) !important;
+}
+
+/* Card content optimizations */
+.dashboard-stat-card .MuiCardContent-root {
+  padding: 0.75rem !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+.dashboard-stat-card .MuiAvatar-root {
+  width: clamp(32px, 4vw, 48px) !important;
+  height: clamp(32px, 4vw, 48px) !important;
+}
+
+/* Better proportions for stat cards */
+.stat-card-content {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+}
+
+/* Container and spacing optimizations */
+.main-content-container {
+  max-width: 100vw !important;
+  padding: clamp(0.5rem, 2vw, 1.5rem) !important;
+  box-sizing: border-box !important;
+}
+
+/* Override any fixed Material-UI Grid behaviors */
+[class*="MuiGrid-"] {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ensure all containers are responsive */
+.MuiContainer-root {
+  max-width: 100% !important;
+  padding-left: clamp(0.5rem, 2vw, 1.5rem) !important;
+  padding-right: clamp(0.5rem, 2vw, 1.5rem) !important;
+}
+
+/* Remove Material-UI Grid overrides - use our custom grid */
+.MuiGrid-container {
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.MuiGrid-item {
+  padding: 0 !important;
+}
+
+/* Mobile-first responsive adjustments */
+@media (max-width: 576px) {
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  .dashboard-content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .glass-card {
+    padding: 0.75rem !important;
+  }
+  
+  .dashboard-stat-card {
+    aspect-ratio: 3/1 !important;
+    min-height: 70px !important;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+  .dashboard-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .dashboard-content-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  .main-content-container {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+  }
+  
+  .dashboard-content-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}

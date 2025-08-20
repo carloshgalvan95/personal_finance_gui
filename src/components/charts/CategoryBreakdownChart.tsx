@@ -54,11 +54,18 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          {title}
-        </Typography>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 700, 
+          color: 'rgba(255, 255, 255, 0.9)',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        {title}
+      </Typography>
         
         <Box sx={{ display: 'flex', gap: 2, height }}>
           {/* Chart */}
@@ -120,7 +127,6 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
             </Box>
           )}
         </Box>
-      </CardContent>
-    </Card>
+    </Box>
   );
 };

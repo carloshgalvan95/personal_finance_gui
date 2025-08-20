@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
 import { AppIcon } from '../common/AppLogo';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export const Header: React.FC = () => {
   const { state, logout } = useAuth();
@@ -71,6 +72,9 @@ export const Header: React.FC = () => {
 
       {/* Right side actions */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* Theme Toggle */}
+        <ThemeToggle size="medium" />
+        
         {/* Notifications */}
         <IconButton
           size="large"

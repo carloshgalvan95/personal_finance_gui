@@ -81,11 +81,18 @@ export const FinancialHealthScore: React.FC<FinancialHealthScoreProps> = ({
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          {title}
-        </Typography>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 700, 
+          color: 'rgba(255, 255, 255, 0.9)',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        {title}
+      </Typography>
 
         {/* Overall Score */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -196,7 +203,6 @@ export const FinancialHealthScore: React.FC<FinancialHealthScoreProps> = ({
             }
           </Typography>
         </Alert>
-      </CardContent>
-    </Card>
+    </Box>
   );
 };

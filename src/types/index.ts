@@ -129,3 +129,94 @@ export interface GoalForm {
   targetAmount: string;
   targetDate: string;
 }
+
+// Investment Types
+export interface Investment {
+  id: string;
+  userId: string;
+  symbol: string;
+  type: 'etf' | 'cryptocurrency' | 'stock';
+  name: string;
+  quantity: number;
+  purchasePrice: number;
+  purchaseDate: Date;
+  currentPrice?: number;
+  lastUpdated?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AssetPrice {
+  symbol: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  volume?: number;
+  marketCap?: number;
+  lastUpdated: Date;
+}
+
+export interface Portfolio {
+  id: string;
+  userId: string;
+  totalValue: number;
+  totalInvested: number;
+  totalGainLoss: number;
+  totalGainLossPercent: number;
+  investments: Investment[];
+  lastUpdated: Date;
+}
+
+export interface InvestmentTransaction {
+  id: string;
+  userId: string;
+  investmentId: string;
+  type: 'buy' | 'sell';
+  quantity: number;
+  price: number;
+  fees: number;
+  date: Date;
+  createdAt: Date;
+}
+
+export interface InvestmentPerformance {
+  symbol: string;
+  name: string;
+  currentPrice: number;
+  purchasePrice: number;
+  quantity: number;
+  currentValue: number;
+  investedValue: number;
+  gainLoss: number;
+  gainLossPercent: number;
+  dayChange: number;
+  dayChangePercent: number;
+}
+
+// Investment Form Types
+export interface InvestmentForm {
+  symbol: string;
+  type: 'etf' | 'cryptocurrency' | 'stock';
+  name: string;
+  quantity: string;
+  purchasePrice: string;
+  purchaseDate: string;
+}
+
+// API Types for external financial data
+export interface YahooFinanceQuote {
+  symbol: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  volume: number;
+}
+
+export interface CryptoQuote {
+  symbol: string;
+  price: number;
+  change24h: number;
+  changePercent24h: number;
+  marketCap: number;
+  volume24h: number;
+}

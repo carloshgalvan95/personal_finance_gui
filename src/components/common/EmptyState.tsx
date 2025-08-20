@@ -28,12 +28,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <Paper
+      className="glass-card card-auto fade-in"
       sx={{
-        p: 6,
+        p: { xs: 3, md: 6 },
         textAlign: 'center',
-        backgroundColor: 'grey.50',
-        border: '2px dashed',
-        borderColor: 'grey.300',
+        border: '2px dashed rgba(255, 255, 255, 0.3)',
       }}
     >
       <Box

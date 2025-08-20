@@ -84,11 +84,18 @@ export const MonthlyComparisonChart: React.FC<MonthlyComparisonChartProps> = ({
   );
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          {title}
-        </Typography>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 700, 
+          color: 'rgba(255, 255, 255, 0.9)',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        {title}
+      </Typography>
         
         {/* Summary Stats */}
         <Box sx={{ display: 'flex', gap: 2, mb: 2, flexWrap: 'wrap' }}>
@@ -137,7 +144,6 @@ export const MonthlyComparisonChart: React.FC<MonthlyComparisonChartProps> = ({
         <Box sx={{ height }}>
           <Bar data={chartData} options={options} />
         </Box>
-      </CardContent>
-    </Card>
+    </Box>
   );
 };

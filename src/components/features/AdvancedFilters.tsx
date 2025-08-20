@@ -167,7 +167,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
   return (
     <>
-      <Paper elevation={1} sx={{ mb: 3 }}>
+      <Paper className="glass-card dashboard-chart-card slide-up" sx={{ mb: 3 }}>
         {/* Quick Filters Bar */}
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>

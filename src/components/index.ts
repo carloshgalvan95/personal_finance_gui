@@ -17,12 +17,15 @@ export { BudgetList } from './features/BudgetList';
 export { GoalForm } from './features/GoalForm';
 export { GoalList } from './features/GoalList';
 export { DataManagement } from './features/DataManagement';
+export { InvestmentForm } from './features/InvestmentForm';
+export { PortfolioOverview } from './features/PortfolioOverview';
 
 // Common Components
 export { LoadingSpinner } from './common/LoadingSpinner';
 export { EmptyState } from './common/EmptyState';
 export { PageHeader } from './common/PageHeader';
 export { AppLogo, AppIcon } from './common/AppLogo';
+export { ThemeToggle } from './common/ThemeToggle';
 
 // Dashboard Components
 export { RecentTransactions } from './dashboard/RecentTransactions';
@@ -36,3 +39,4 @@ export { CategoryBreakdownChart } from './charts/CategoryBreakdownChart';
 export { MonthlyComparisonChart } from './charts/MonthlyComparisonChart';
 export { BudgetProgressChart } from './charts/BudgetProgressChart';
 export { FinancialHealthScore } from './charts/FinancialHealthScore';
+export { InvestmentPerformanceChart } from './charts/InvestmentPerformanceChart';

@@ -1,4 +1,4 @@
-import type { User, Transaction, Budget, FinancialGoal, TransactionCategory } from '../types';
+import type { User, Transaction, Budget, FinancialGoal, TransactionCategory, Investment, InvestmentTransaction } from '../types';
 import { LocalStorageService, STORAGE_KEYS } from './localStorage';
 
 // Data structure versioning for migrations
@@ -13,6 +13,8 @@ export interface AppData {
   budgets: Budget[];
   goals: FinancialGoal[];
   categories: TransactionCategory[];
+  investments: Investment[];
+  investmentTransactions: InvestmentTransaction[];
   settings: AppSettings;
   metadata: DataMetadata;
 }
@@ -36,6 +38,8 @@ export interface DataMetadata {
   totalTransactions: number;
   totalBudgets: number;
   totalGoals: number;
+  totalInvestments: number;
+  totalInvestmentTransactions: number;
   lastBackup: string | null;
   dataSize: number; // in bytes
   created: string;
@@ -249,15 +253,19 @@ export class DataManager {
     const budgets = LocalStorageService.get<Budget[]>('personal_finance_budgets') || [];
     const goals = LocalStorageService.get<FinancialGoal[]>('personal_finance_goals') || [];
     const categories = LocalStorageService.get<TransactionCategory[]>(STORAGE_KEYS.CATEGORIES) || [];
+    const investments = LocalStorageService.get<Investment[]>('personal_finance_investments') || [];
+    const investmentTransactions = LocalStorageService.get<InvestmentTransaction[]>('personal_finance_investment_transactions') || [];
     const settings = this.getSettings();
 
-    const dataString = JSON.stringify({ user, transactions, budgets, goals, categories, settings });
+    const dataString = JSON.stringify({ user, transactions, budgets, goals, categories, investments, investmentTransactions, settings });
     const dataSize = new Blob([dataString]).size;
 
     const metadata: DataMetadata = {
       totalTransactions: transactions.length,
       totalBudgets: budgets.length,
       totalGoals: goals.length,
+      totalInvestments: investments.length,
+      totalInvestmentTransactions: investmentTransactions.length,
       lastBackup: LocalStorageService.get<string>('personal_finance_last_backup'),
       dataSize,
       created: LocalStorageService.get<string>('personal_finance_data_created') || new Date().toISOString(),
@@ -278,6 +286,8 @@ export class DataManager {
       budgets,
       goals,
       categories,
+      investments,
+      investmentTransactions,
       settings,
       metadata,
     };

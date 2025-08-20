@@ -71,35 +71,175 @@ const StatCard: React.FC<StatCardProps> = ({
 
   return (
     <Card 
+      className="modern-stat-card fade-in"
       sx={{ 
         cursor: onClick ? 'pointer' : 'default',
-        '&:hover': onClick ? { boxShadow: 2 } : {},
+        position: 'relative',
+        overflow: 'hidden',
+        '&:hover': onClick ? { 
+          transform: 'translateY(-8px) scale(1.02)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+        } : {},
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
       onClick={onClick}
     >
-      <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Avatar sx={{ bgcolor: color, mr: 2 }}>{icon}</Avatar>
-          <Typography variant="h6" color="text.secondary">
-            {title}
+      <CardContent 
+        sx={{ 
+          p: 3,
+          height: '100%', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'space-between',
+          position: 'relative',
+          zIndex: 2,
+        }}
+      >
+        {/* Top Section - Icon and Title */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'flex-start', 
+          justifyContent: 'space-between', 
+          mb: 2,
+          minHeight: '48px',
+          gap: 1,
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1.5,
+            minWidth: 0,
+            flex: 1,
+          }}>
+            <Avatar 
+              sx={{ 
+                bgcolor: 'transparent',
+                background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
+                boxShadow: `0 8px 25px ${color}40`,
+                border: 'none',
+                width: { xs: 40, sm: 48 },
+                height: { xs: 40, sm: 48 },
+                flexShrink: 0,
+              }}
+            >
+              {icon}
+            </Avatar>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                color: 'text.primary',
+                fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                opacity: 0.8,
+                lineHeight: 1.3,
+              }}
+            >
+              {title}
+            </Typography>
+          </Box>
+          
+          {/* Change indicator icon - Fixed positioning */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            color: getChangeColor(),
+            backgroundColor: changeType === 'positive' ? 'success.light' : 
+                           changeType === 'negative' ? 'error.light' : 'grey.200',
+            borderRadius: '50%',
+            width: { xs: 28, sm: 32 },
+            height: { xs: 28, sm: 32 },
+            opacity: 0.15,
+            flexShrink: 0,
+          }}>
+            <Box sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+              {getChangeIcon()}
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Main Value */}
+        <Box sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          alignItems: 'center', 
+          my: 1,
+          minHeight: '44px',
+          overflow: 'hidden',
+        }}>
+          <Typography 
+            variant="h3" 
+            component="div" 
+            sx={{ 
+              fontWeight: 800,
+              lineHeight: 1.1,
+              color: 'text.primary',
+              fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' },
+            }}
+          >
+            {value}
           </Typography>
         </Box>
-        <Typography variant="h4" component="div" gutterBottom>
-          {value}
-        </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
+
+        {/* Bottom Section - Change Information */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 1,
+          minHeight: '28px',
+          overflow: 'hidden',
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
             color: getChangeColor(),
-          }}
-        >
-          {getChangeIcon()}
-          <Typography variant="body2" sx={{ ml: 0.5 }}>
-            {change}
-          </Typography>
+            backgroundColor: changeType === 'positive' ? 'success.light' : 
+                           changeType === 'negative' ? 'error.light' : 'grey.200',
+            borderRadius: '16px',
+            px: { xs: 1, sm: 1.5 },
+            py: 0.5,
+            opacity: 0.9,
+            minWidth: 0,
+            flex: 1,
+            maxWidth: '100%',
+          }}>
+            <Box sx={{ 
+              fontSize: { xs: '0.8rem', sm: '0.9rem' },
+              flexShrink: 0,
+              mr: 0.5,
+            }}>
+              {getChangeIcon()}
+            </Box>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                fontWeight: 600,
+                fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                color: 'inherit',
+                lineHeight: 1.3,
+              }}
+            >
+              {change}
+            </Typography>
+          </Box>
         </Box>
       </CardContent>
+
+      {/* Background gradient overlay */}
+      <Box 
+        sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '100%',
+          height: '100%',
+          background: `linear-gradient(135deg, transparent 0%, ${color}08 100%)`,
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      />
     </Card>
   );
 };
@@ -198,122 +338,194 @@ export const Dashboard: React.FC = () => {
   ];
 
   return (
-    <Box>
-      <PageHeader
-        title={`Welcome back${user?.name ? `, ${user.name}` : ''}!`}
-        subtitle="Here's your financial overview"
-        actions={
+    <Box 
+      className="modern-dashboard-container"
+      sx={{ 
+        minHeight: '100vh',
+        background: 'transparent',
+        position: 'relative',
+      }}
+    >
+      {/* Modern Header Section */}
+      <Box className="dashboard-header-section">
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 2, sm: 0 },
+            mb: 4,
+          }}
+        >
+          <Box>
+            <Typography 
+              variant="h3" 
+              sx={{ 
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 1,
+                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' },
+              }}
+            >
+              Welcome back{user?.name ? `, ${user.name}` : ''}!
+            </Typography>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                color: 'text.secondary',
+                fontWeight: 400,
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+              }}
+            >
+              Here's your financial overview for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </Typography>
+          </Box>
+          
           <Button
             variant="contained"
             startIcon={<Add />}
             onClick={() => navigate('/transactions')}
+            className="modern-cta-button"
+            sx={{
+              borderRadius: '12px',
+              px: 3,
+              py: 1.5,
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              textTransform: 'none',
+              boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              '&:hover': {
+                boxShadow: '0 12px 35px rgba(102, 126, 234, 0.4)',
+                transform: 'translateY(-2px)',
+              },
+              transition: 'all 0.3s ease',
+            }}
           >
             Add Transaction
           </Button>
-        }
-      />
-
-      {/* Financial Alerts */}
-      {insights.alerts.length > 0 && (
-        <Box sx={{ mb: 3 }}>
-          {insights.alerts.map((alert, index) => (
-            <Alert key={index} severity="warning" sx={{ mb: 1 }}>
-              {alert}
-            </Alert>
-          ))}
         </Box>
-      )}
 
-      {/* Financial Insights */}
-      {insights.insights.length > 0 && (
-        <Box sx={{ mb: 3 }}>
-          {insights.insights.slice(0, 2).map((insight, index) => (
-            <Alert key={index} severity="info" sx={{ mb: 1 }}>
-              {insight}
-            </Alert>
-          ))}
-        </Box>
-      )}
-
-      {/* Stats Grid */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4 }}>
-        {stats.map((stat, index) => (
-          <Box
-            key={index}
-            sx={{
-              flex: {
-                xs: '1 1 100%',
-                sm: '1 1 calc(50% - 12px)',
-                md: '1 1 calc(25% - 18px)',
-              },
-            }}
-          >
-            <StatCard {...stat} />
+        {/* Alert Section */}
+        {(insights.alerts.length > 0 || insights.insights.length > 0) && (
+          <Box className="dashboard-alerts-section" sx={{ mb: 4 }}>
+            {insights.alerts.map((alert, index) => (
+              <Alert 
+                key={`alert-${index}`}
+                severity="warning" 
+                sx={{ 
+                  mb: 1.5,
+                  borderRadius: '12px',
+                  '& .MuiAlert-icon': { fontSize: '1.25rem' },
+                  fontWeight: 500,
+                }}
+              >
+                {alert}
+              </Alert>
+            ))}
+            {insights.insights.slice(0, 2).map((insight, index) => (
+              <Alert 
+                key={`insight-${index}`}
+                severity="info" 
+                sx={{ 
+                  mb: 1.5,
+                  borderRadius: '12px',
+                  '& .MuiAlert-icon': { fontSize: '1.25rem' },
+                  fontWeight: 500,
+                }}
+              >
+                {insight}
+              </Alert>
+            ))}
           </Box>
+        )}
+      </Box>
+
+      {/* Modern Stats Grid */}
+      <Box className="modern-stats-grid">
+        {stats.map((stat, index) => (
+          <StatCard key={index} {...stat} />
         ))}
       </Box>
 
-      {/* Dashboard Content */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        {/* Recent Transactions */}
-        <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(40% - 12px)' } }}>
-          <Paper sx={{ p: 3, height: 'fit-content' }}>
+      {/* Modern Dashboard Content Grid */}
+      <Box className="modern-content-grid">
+        {/* Recent Transactions - Full Width on Large Screens */}
+        <Box className="modern-card-wrapper" sx={{ gridColumn: { lg: 'span 2' } }}>
+          <Paper className="modern-dashboard-card slide-up">
             <RecentTransactions transactions={dashboardData.recentTransactions} />
           </Paper>
         </Box>
 
         {/* Budget Overview */}
-        <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(30% - 12px)' } }}>
-          <Paper sx={{ p: 3, height: 'fit-content' }}>
+        <Box className="modern-card-wrapper">
+          <Paper className="modern-dashboard-card slide-up">
             <BudgetOverview budgetStatuses={dashboardData.budgetStatus} />
           </Paper>
         </Box>
 
         {/* Goals Progress */}
-        <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(30% - 12px)' } }}>
-          <Paper sx={{ p: 3, height: 'fit-content' }}>
+        <Box className="modern-card-wrapper">
+          <Paper className="modern-dashboard-card slide-up">
             <GoalsProgress goalProgresses={dashboardData.goalProgress} />
           </Paper>
         </Box>
 
         {/* Spending by Category */}
-        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
-          <Paper sx={{ p: 3, height: 'fit-content' }}>
+        <Box className="modern-card-wrapper">
+          <Paper className="modern-dashboard-card slide-up">
             <SpendingByCategory categorySpending={categorySpending} />
           </Paper>
         </Box>
 
         {/* Quick Actions */}
-        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
-          <Paper sx={{ p: 3, height: 'fit-content' }}>
-            <Typography variant="h6" gutterBottom>
-              Quick Actions
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Button
-                variant="outlined"
-                startIcon={<Add />}
-                onClick={() => navigate('/transactions')}
-                fullWidth
+        <Box className="modern-card-wrapper">
+          <Paper className="modern-dashboard-card slide-up">
+            <Box sx={{ p: 3 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 3,
+                  color: 'text.primary',
+                  fontSize: '1.1rem',
+                }}
               >
-                Add Transaction
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<AccountBalance />}
-                onClick={() => navigate('/budgets')}
-                fullWidth
-              >
-                Manage Budgets
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<GpsFixed />}
-                onClick={() => navigate('/goals')}
-                fullWidth
-              >
-                Track Goals
-              </Button>
+                Quick Actions
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Button
+                  className="modern-action-button"
+                  variant="outlined"
+                  startIcon={<Add />}
+                  onClick={() => navigate('/transactions')}
+                  fullWidth
+                >
+                  Add Transaction
+                </Button>
+                <Button
+                  className="modern-action-button"
+                  variant="outlined"
+                  startIcon={<AccountBalance />}
+                  onClick={() => navigate('/budgets')}
+                  fullWidth
+                >
+                  Manage Budgets
+                </Button>
+                <Button
+                  className="modern-action-button"
+                  variant="outlined"
+                  startIcon={<GpsFixed />}
+                  onClick={() => navigate('/goals')}
+                  fullWidth
+                >
+                  Track Goals
+                </Button>
+              </Box>
             </Box>
           </Paper>
         </Box>

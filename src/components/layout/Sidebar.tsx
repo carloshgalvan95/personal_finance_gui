@@ -21,6 +21,7 @@ import {
   Assessment,
   AccountBalanceWallet,
   GpsFixed,
+  ShowChart,
 } from '@mui/icons-material';
 import { AppLogo } from '../common/AppLogo';
 
@@ -58,6 +59,12 @@ const navigationItems: NavigationItem[] = [
     text: 'Goals',
     icon: <GpsFixed />,
     path: '/goals',
+    section: 'main',
+  },
+  {
+    text: 'Investments',
+    icon: <ShowChart />,
+    path: '/investments',
     section: 'main',
   },
   {
@@ -103,35 +110,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
           <ListItemButton
             selected={selectedItem === item.path}
             onClick={() => handleItemClick(item.path)}
-            sx={{
-              borderRadius: 1,
-              mx: 1,
-              '&.Mui-selected': {
-                backgroundColor: 'primary.main',
-                color: 'primary.contrastText',
-                '&:hover': {
-                  backgroundColor: 'primary.dark',
-                },
-                '& .MuiListItemIcon-root': {
-                  color: 'primary.contrastText',
-                },
-              },
-            }}
+            className="sidebar-nav-button"
           >
-            <ListItemIcon
-              sx={{
-                color:
-                  selectedItem === item.path ? 'inherit' : 'text.secondary',
-              }}
-            >
+            <ListItemIcon>
               {item.icon}
             </ListItemIcon>
             <ListItemText
               primary={item.text}
-              primaryTypographyProps={{
-                fontSize: '0.875rem',
-                fontWeight: selectedItem === item.path ? 600 : 400,
-              }}
             />
           </ListItemButton>
         </ListItem>

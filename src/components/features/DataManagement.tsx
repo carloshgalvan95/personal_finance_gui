@@ -235,8 +235,8 @@ export const DataManagement: React.FC = () => {
 
       {/* Data Health Status */}
       {integrityCheck && (
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
+        <Card className="glass-card dashboard-chart-card slide-up" sx={{ mb: 3 }}>
+          <CardContent sx={{ p: { xs: 2, md: 3 } }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               {integrityCheck.isHealthy ? (
                 <CheckCircle color="success" sx={{ mr: 1 }} />
@@ -272,8 +272,8 @@ export const DataManagement: React.FC = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         {/* Data Statistics */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
-          <Card>
-            <CardContent>
+          <Card className="glass-card dashboard-chart-card slide-up">
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Storage sx={{ mr: 1 }} />
                 <Typography variant="h6">Data Statistics</Typography>
@@ -314,8 +314,8 @@ export const DataManagement: React.FC = () => {
 
         {/* Backup Management */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
-          <Card>
-            <CardContent>
+          <Card className="glass-card dashboard-chart-card slide-up">
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Backup sx={{ mr: 1 }} />
                 <Typography variant="h6">Backup Management</Typography>
@@ -367,8 +367,8 @@ export const DataManagement: React.FC = () => {
 
         {/* App Settings */}
         <Box sx={{ flex: '1 1 100%' }}>
-          <Card>
-            <CardContent>
+          <Card className="glass-card dashboard-chart-card slide-up">
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                 <Settings sx={{ mr: 1 }} />
                 <Typography variant="h6">App Settings</Typography>
@@ -498,8 +498,8 @@ export const DataManagement: React.FC = () => {
 
         {/* Danger Zone */}
         <Box sx={{ flex: '1 1 100%' }}>
-          <Card sx={{ border: '1px solid', borderColor: 'error.main' }}>
-            <CardContent>
+          <Card className="glass-card dashboard-chart-card slide-up" sx={{ border: '1px solid', borderColor: 'error.main' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Warning color="error" sx={{ mr: 1 }} />
                 <Typography variant="h6" color="error">Danger Zone</Typography>

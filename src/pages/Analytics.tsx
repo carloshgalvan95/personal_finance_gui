@@ -12,7 +12,8 @@ import {
   Alert,
   Tabs,
   Tab,
-
+  Button,
+  Grid,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -20,6 +21,7 @@ import {
   BarChart,
   Assessment,
   Timeline,
+  ShowChart,
 } from '@mui/icons-material';
 import { PageHeader } from '../components/common/PageHeader';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -29,6 +31,7 @@ import { MonthlyComparisonChart } from '../components/charts/MonthlyComparisonCh
 import { BudgetProgressChart } from '../components/charts/BudgetProgressChart';
 import { FinancialHealthScore } from '../components/charts/FinancialHealthScore';
 import { AnalyticsService } from '../services/analyticsService';
+import { InvestmentService } from '../services/investmentService';
 import { useAuth } from '../hooks/useAuth';
 
 interface TabPanelProps {
@@ -67,6 +70,8 @@ export const Analytics: React.FC = () => {
   const [monthlyComparison, setMonthlyComparison] = useState<any[]>([]);
   const [budgetAnalysis, setBudgetAnalysis] = useState<any[]>([]);
   const [financialHealth, setFinancialHealth] = useState<any>(null);
+  const [investmentStats, setInvestmentStats] = useState<any>(null);
+  const [hasInvestments, setHasInvestments] = useState(false);
 
   const loadAnalyticsData = useCallback(() => {
     if (!user) return;
@@ -80,12 +85,18 @@ export const Analytics: React.FC = () => {
       const comparison = AnalyticsService.getMonthlyComparison(user.id, 6);
       const budgets = AnalyticsService.getBudgetAnalysis(user.id);
       const health = AnalyticsService.calculateFinancialHealthScore(user.id);
+      
+      // Load investment data
+      const investments = InvestmentService.hasInvestments(user.id);
+      const invStats = InvestmentService.getInvestmentStatistics(user.id);
 
       setSpendingTrends(trends);
       setCategorySpending(categories);
       setMonthlyComparison(comparison);
       setBudgetAnalysis(budgets);
       setFinancialHealth(health);
+      setHasInvestments(investments);
+      setInvestmentStats(invStats);
 
     } catch (error) {
       console.error('Error loading analytics data:', error);
@@ -159,6 +170,14 @@ export const Analytics: React.FC = () => {
             variant="outlined"
           />
         )}
+        {hasInvestments && investmentStats && (
+          <Chip
+            icon={<ShowChart />}
+            label={`${investmentStats.totalSymbols} Investment Assets`}
+            variant="outlined"
+            color="primary"
+          />
+        )}
       </Box>
 
       {/* Time Range Selector */}
@@ -185,21 +204,34 @@ export const Analytics: React.FC = () => {
           <Tab icon={<PieChart />} label="Categories" />
           <Tab icon={<BarChart />} label="Comparison" />
           <Tab icon={<Assessment />} label="Health Score" />
+          {hasInvestments && <Tab icon={<ShowChart />} label="Investments" />}
         </Tabs>
       </Box>
 
       {/* Tab Panels */}
       <TabPanel value={activeTab} index={0}>
         {/* Trends Tab */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <SpendingTrendsChart
-            data={spendingTrends}
-            height={400}
-            title="Income vs Expenses Trend"
-          />
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
+          <Box className="glass-card dashboard-chart-card slide-up">
+            <SpendingTrendsChart
+              data={spendingTrends}
+              height={400}
+              title="Income vs Expenses Trend"
+            />
+          </Box>
           
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
+          <Box 
+            sx={{ 
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(auto-fit, minmax(350px, 1fr))',
+              },
+              gap: { xs: 2, md: 3 },
+              gridAutoRows: 'auto',
+            }}
+          >
+            <Box className="glass-card dashboard-chart-card slide-up">
               <MonthlyComparisonChart
                 data={monthlyComparison}
                 height={350}
@@ -207,10 +239,17 @@ export const Analytics: React.FC = () => {
               />
             </Box>
             
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
+            <Card className="glass-card dashboard-chart-card slide-up">
+              <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom 
+                    sx={{ 
+                      fontWeight: 700, 
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                    }}
+                  >
                     Key Insights
                   </Typography>
                   
@@ -252,13 +291,22 @@ export const Analytics: React.FC = () => {
               </Card>
             </Box>
           </Box>
-        </Box>
       </TabPanel>
 
       <TabPanel value={activeTab} index={1}>
         {/* Categories Tab */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(60% - 12px)' } }}>
+        <Box 
+          sx={{ 
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              lg: '2fr 1fr',
+            },
+            gap: { xs: 2, md: 3 },
+            gridAutoRows: 'auto',
+          }}
+        >
+          <Box className="glass-card dashboard-chart-card slide-up">
             <CategoryBreakdownChart
               data={categorySpending}
               height={400}
@@ -266,10 +314,17 @@ export const Analytics: React.FC = () => {
             />
           </Box>
           
-          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(40% - 12px)' } }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+          <Card className="glass-card dashboard-chart-card slide-up">
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  sx={{ 
+                    fontWeight: 700, 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  }}
+                >
                   Category Insights
                 </Typography>
                 
@@ -316,31 +371,50 @@ export const Analytics: React.FC = () => {
                 )}
               </CardContent>
             </Card>
-          </Box>
         </Box>
       </TabPanel>
 
       <TabPanel value={activeTab} index={2}>
         {/* Comparison Tab */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <BudgetProgressChart
-            data={budgetAnalysis}
-            height={400}
-            title="Budget Performance"
-          />
+        <Box 
+          sx={{ 
+            display: 'grid',
+            gridTemplateColumns: '1fr',
+            gap: { xs: 2, md: 3 },
+          }}
+        >
+          <Box className="glass-card dashboard-chart-card slide-up">
+            <BudgetProgressChart
+              data={budgetAnalysis}
+              height={400}
+              title="Budget Performance"
+            />
+          </Box>
           
-          <MonthlyComparisonChart
-            data={monthlyComparison}
-            height={400}
-            title="Monthly Financial Performance"
-          />
+          <Box className="glass-card dashboard-chart-card slide-up">
+            <MonthlyComparisonChart
+              data={monthlyComparison}
+              height={400}
+              title="Monthly Financial Performance"
+            />
+          </Box>
         </Box>
       </TabPanel>
 
       <TabPanel value={activeTab} index={3}>
         {/* Health Score Tab */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(60% - 12px)' } }}>
+        <Box 
+          sx={{ 
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              lg: '2fr 1fr',
+            },
+            gap: { xs: 2, md: 3 },
+            gridAutoRows: 'auto',
+          }}
+        >
+          <Box className="glass-card dashboard-chart-card slide-up">
             {financialHealth && (
               <FinancialHealthScore
                 healthScore={financialHealth}
@@ -349,10 +423,17 @@ export const Analytics: React.FC = () => {
             )}
           </Box>
           
-          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 calc(40% - 12px)' } }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+          <Card className="glass-card dashboard-chart-card slide-up">
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  sx={{ 
+                    fontWeight: 700, 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  }}
+                >
                   Health Score Breakdown
                 </Typography>
                 
@@ -389,9 +470,96 @@ export const Analytics: React.FC = () => {
                 )}
               </CardContent>
             </Card>
-          </Box>
         </Box>
       </TabPanel>
+
+      {/* Investment Tab */}
+      {hasInvestments && (
+        <TabPanel value={activeTab} index={4}>
+          <Box>
+            <Alert severity="info" sx={{ mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Investment Analytics Integration
+              </Typography>
+              <Typography>
+                You have {investmentStats?.totalSymbols || 0} investment assets being tracked. 
+                For detailed investment analysis, visit the dedicated{' '}
+                <Button 
+                  variant="text" 
+                  size="small" 
+                  onClick={() => window.location.href = '/investments'}
+                  sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
+                >
+                  Investments page
+                </Button>.
+              </Typography>
+            </Alert>
+
+            {investmentStats && (
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Card className="glass-card">
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Total Assets
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold">
+                        {investmentStats.totalSymbols}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3}>
+                  <Card className="glass-card">
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Total Investments
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold">
+                        {investmentStats.totalInvestments}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3}>
+                  <Card className="glass-card">
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Investment Transactions
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold">
+                        {investmentStats.totalTransactions}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3}>
+                  <Card className="glass-card">
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Asset Types
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        {Object.entries(investmentStats.portfolioTypes).map(([type, count]) => (
+                          <Chip 
+                            key={type}
+                            label={`${count} ${type.toUpperCase()}`}
+                            size="small"
+                            variant="outlined"
+                          />
+                        ))}
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            )}
+          </Box>
+        </TabPanel>
+      )}
     </Box>
   );
 };

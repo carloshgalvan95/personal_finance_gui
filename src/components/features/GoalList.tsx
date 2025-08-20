@@ -159,8 +159,8 @@ export const GoalList: React.FC<GoalListProps> = ({
           const recommendedMonthly = GoalService.getRecommendedMonthlyContribution(goal);
           
           return (
-            <Card key={goal.id} sx={{ position: 'relative' }}>
-              <CardContent>
+            <Card key={goal.id} className="glass-card dashboard-chart-card slide-up" sx={{ position: 'relative' }}>
+              <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Box>
                     <Typography variant="h6" component="h3">

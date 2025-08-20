@@ -4,11 +4,10 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
@@ -16,14 +15,16 @@ import { Transactions } from './pages/Transactions';
 import { Budgets } from './pages/Budgets';
 import { Goals } from './pages/Goals';
 import { Analytics } from './pages/Analytics';
+import { Investments } from './pages/Investments';
 import { Settings } from './pages/Settings';
-import { theme } from './theme';
+
+// Import glassmorphism styles
+import './styles/glassmorphism.css';
 
 function App() {
   try {
     return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <ThemeProvider>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <AuthProvider>
             <Router>
@@ -35,15 +36,16 @@ function App() {
                     element={<Navigate to="/dashboard" replace />}
                   />
                   <Route path="/dashboard" element={<Dashboard />} />
-                                        <Route path="/transactions" element={<Transactions />} />
-                        <Route path="/budgets" element={<Budgets />} />
-                        <Route path="/goals" element={<Goals />} />
-                        <Route path="/analytics" element={<Analytics />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route
-                          path="*"
-                          element={<Navigate to="/dashboard" replace />}
-                        />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/budgets" element={<Budgets />} />
+                  <Route path="/goals" element={<Goals />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/investments" element={<Investments />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to="/dashboard" replace />}
+                  />
                 </Routes>
               </AppLayout>
             </ProtectedRoute>

@@ -33,6 +33,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       {/* App Bar */}
       <AppBar
         position="fixed"
+        className="glass-header"
+        elevation={0}
         sx={{
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
           ml: { md: `${DRAWER_WIDTH}px` },
@@ -73,6 +75,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               width: DRAWER_WIDTH,
             },
           }}
+          PaperProps={{
+            className: 'glass-sidebar',
+            elevation: 0,
+          }}
         >
           <Sidebar onItemClick={() => setMobileOpen(false)} />
         </Drawer>
@@ -87,6 +93,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               width: DRAWER_WIDTH,
             },
           }}
+          PaperProps={{
+            className: 'glass-sidebar',
+            elevation: 0,
+          }}
           open
         >
           <Sidebar />
@@ -98,11 +108,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1.5, sm: 2, md: 3 },
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
           mt: 8, // Account for AppBar height
           minHeight: 'calc(100vh - 64px)',
-          backgroundColor: theme.palette.grey[50],
+          background: 'transparent',
+          position: 'relative',
         }}
       >
         {children}

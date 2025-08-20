@@ -168,8 +168,8 @@ export const Goals: React.FC = () => {
 
         {/* Goals Statistics */}
         {statistics && goals.length > 0 && (
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
+          <Card className="glass-card dashboard-stat-card slide-up" sx={{ mb: 3 }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Typography variant="h6" gutterBottom>
                 Goals Overview
               </Typography>

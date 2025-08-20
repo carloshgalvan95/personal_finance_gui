@@ -102,11 +102,18 @@ export const BudgetProgressChart: React.FC<BudgetProgressChartProps> = ({
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          {title}
-        </Typography>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 700, 
+          color: 'rgba(255, 255, 255, 0.9)',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        {title}
+      </Typography>
         
         {/* Overall Progress */}
         <Box sx={{ mb: 3 }}>
@@ -182,7 +189,6 @@ export const BudgetProgressChart: React.FC<BudgetProgressChartProps> = ({
         <Box sx={{ height }}>
           <Bar data={chartData} options={options} />
         </Box>
-      </CardContent>
-    </Card>
+    </Box>
   );
 };
