@@ -82,6 +82,45 @@ body::before {
     inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
+/* Focus states for better accessibility */
+.glass-card:focus-within {
+  border-color: #6366f1 !important;
+  box-shadow: 
+    0 8px 32px rgba(15, 23, 42, 0.12),
+    0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+[data-theme='dark'] .glass-card:focus-within {
+  border-color: #8b5cf6 !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 2px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Interactive elements focus states */
+button:focus-visible,
+.MuiButton-root:focus-visible,
+.MuiIconButton-root:focus-visible {
+  outline: 2px solid #6366f1 !important;
+  outline-offset: 2px !important;
+  border-radius: 8px !important;
+}
+
+[data-theme='dark'] button:focus-visible,
+[data-theme='dark'] .MuiButton-root:focus-visible,
+[data-theme='dark'] .MuiIconButton-root:focus-visible {
+  outline-color: #8b5cf6 !important;
+}
+
+/* Input focus states */
+.MuiTextField-root .MuiOutlinedInput-root:focus-within {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+[data-theme='dark'] .MuiTextField-root .MuiOutlinedInput-root:focus-within {
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3) !important;
+}
+
 /* Navigation glassmorphism */
 .glass-sidebar {
   background: rgba(255, 255, 255, 0.6) !important;

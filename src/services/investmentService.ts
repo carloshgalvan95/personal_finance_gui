@@ -31,7 +31,7 @@ export class InvestmentService {
   }
 
   /**
-   * Add a new investment
+   * Add a new investment or consolidate with existing one
    */
   static addInvestment(userId: string, investmentData: {
     symbol: string;
@@ -43,28 +43,51 @@ export class InvestmentService {
   }): Investment {
     const investments = LocalStorageService.get<Investment[]>(this.INVESTMENTS_KEY) || [];
     
-    const newInvestment: Investment = {
-      id: this.generateId(),
-      userId,
-      ...investmentData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    // Check if user already owns this symbol
+    const existingInvestment = investments.find(
+      inv => inv.userId === userId && inv.symbol === investmentData.symbol
+    );
 
-    investments.push(newInvestment);
-    LocalStorageService.set(this.INVESTMENTS_KEY, investments);
+    if (existingInvestment) {
+      // Consolidate with existing investment
+      // First, add the new transaction
+      this.addInvestmentTransaction(userId, {
+        investmentId: existingInvestment.id,
+        type: 'buy',
+        quantity: investmentData.quantity,
+        price: investmentData.purchasePrice,
+        fees: 0,
+        date: investmentData.purchaseDate,
+      });
 
-    // Create initial investment transaction
-    this.addInvestmentTransaction(userId, {
-      investmentId: newInvestment.id,
-      type: 'buy',
-      quantity: investmentData.quantity,
-      price: investmentData.purchasePrice,
-      fees: 0,
-      date: investmentData.purchaseDate,
-    });
+      // The updateInvestmentFromTransactions method will recalculate the average price
+      // and total quantity based on all transactions
+      return existingInvestment;
+    } else {
+      // Create new investment for first-time purchase
+      const newInvestment: Investment = {
+        id: this.generateId(),
+        userId,
+        ...investmentData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-    return newInvestment;
+      investments.push(newInvestment);
+      LocalStorageService.set(this.INVESTMENTS_KEY, investments);
+
+      // Create initial investment transaction
+      this.addInvestmentTransaction(userId, {
+        investmentId: newInvestment.id,
+        type: 'buy',
+        quantity: investmentData.quantity,
+        price: investmentData.purchasePrice,
+        fees: 0,
+        date: investmentData.purchaseDate,
+      });
+
+      return newInvestment;
+    }
   }
 
   /**
@@ -396,5 +419,72 @@ export class InvestmentService {
     
     // Return symbols not yet in portfolio
     return recommendedSymbols.filter(symbol => !currentSymbols.has(symbol));
+  }
+
+  /**
+   * Fix investment data that was entered with total amount instead of per-share price
+   * Call this method if you suspect an investment has incorrect price calculation
+   */
+  static fixInvestmentPricing(investmentId: string, totalAmountInvested: number): boolean {
+    const investment = this.getInvestmentById(investmentId);
+    if (!investment) {
+      return false;
+    }
+
+    // Calculate the correct price per share
+    const correctPricePerShare = totalAmountInvested / investment.quantity;
+    
+    // Update the investment
+    this.updateInvestment(investmentId, {
+      purchasePrice: correctPricePerShare,
+    });
+
+    // Also update the related transaction
+    const transactions = this.getInvestmentTransactions(investmentId);
+    const initialTransaction = transactions.find(t => t.type === 'buy');
+    if (initialTransaction) {
+      const allTransactions = LocalStorageService.get<InvestmentTransaction[]>(this.INVESTMENT_TRANSACTIONS_KEY) || [];
+      const transactionIndex = allTransactions.findIndex(t => t.id === initialTransaction.id);
+      if (transactionIndex !== -1) {
+        allTransactions[transactionIndex].price = correctPricePerShare;
+        LocalStorageService.set(this.INVESTMENT_TRANSACTIONS_KEY, allTransactions);
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Detect potentially incorrect investment pricing
+   * Returns investments that might have been entered with total amount instead of per-share price
+   */
+  static detectPotentialPricingIssues(userId: string): Array<{
+    investment: Investment;
+    suspectedTotalAmount: number;
+    currentCalculatedValue: number;
+  }> {
+    const investments = this.getInvestments(userId);
+    const potentialIssues: Array<{
+      investment: Investment;
+      suspectedTotalAmount: number;
+      currentCalculatedValue: number;
+    }> = [];
+
+    investments.forEach(investment => {
+      // If the purchase price seems too low for typical share prices, it might be a total amount
+      const currentValue = investment.quantity * investment.purchasePrice;
+      
+      // For ETFs like VOO, VT, etc., typical share prices are $100-600
+      // If the calculated investment value is very small, it's likely wrong
+      if (investment.type === 'etf' && currentValue < 50 && investment.purchasePrice < 50) {
+        potentialIssues.push({
+          investment,
+          suspectedTotalAmount: investment.purchasePrice, // The "price" might actually be the total amount
+          currentCalculatedValue: currentValue,
+        });
+      }
+    });
+
+    return potentialIssues;
   }
 }

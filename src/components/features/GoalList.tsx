@@ -180,6 +180,7 @@ export const GoalList: React.FC<GoalListProps> = ({
                   <IconButton
                     onClick={(e) => handleMenuOpen(e, goal)}
                     size="small"
+                    aria-label={`options for goal ${goal.title}`}
                   >
                     <MoreVert />
                   </IconButton>

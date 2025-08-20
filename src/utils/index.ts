@@ -187,3 +187,6 @@ export const groupBy = <T, K extends keyof T>(
     {} as Record<string, T[]>
   );
 };
+
+// Export investment data fix utilities
+export * from './fixInvestmentData';

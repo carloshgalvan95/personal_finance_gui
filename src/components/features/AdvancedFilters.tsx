@@ -186,6 +186,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                   onClick={() => setShowSaveDialog(true)}
                   disabled={!hasActiveFilters}
                   size="small"
+                  aria-label="save current filter"
                 >
                   <Save />
                 </IconButton>
@@ -194,6 +195,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 <IconButton 
                   onClick={() => setShowSavedFilters(true)}
                   size="small"
+                  aria-label="view saved filters"
                 >
                   <Bookmark />
                 </IconButton>
@@ -203,6 +205,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                   onClick={handleClearFilters}
                   disabled={!hasActiveFilters}
                   size="small"
+                  aria-label="clear all filters"
                 >
                   <Clear />
                 </IconButton>
@@ -433,6 +436,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                       <IconButton
                         edge="end"
                         onClick={() => handleDeleteSavedFilter(savedFilter.id)}
+                        aria-label={`delete saved filter ${savedFilter.name}`}
                       >
                         <Delete />
                       </IconButton>

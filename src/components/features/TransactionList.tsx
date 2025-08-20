@@ -268,6 +268,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                     <IconButton
                       onClick={(e) => handleMenuOpen(e, transaction)}
                       size="small"
+                      aria-label={`options for transaction ${transaction.description}`}
                     >
                       <MoreVert />
                     </IconButton>

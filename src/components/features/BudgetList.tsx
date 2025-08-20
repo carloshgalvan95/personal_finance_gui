@@ -105,6 +105,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({
                 <IconButton
                   onClick={(e) => handleMenuOpen(e, budget)}
                   size="small"
+                  aria-label={`options for budget ${budget.categoryName}`}
                 >
                   <MoreVert />
                 </IconButton>

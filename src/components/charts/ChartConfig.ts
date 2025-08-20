@@ -30,10 +30,35 @@ ChartJS.register(
 export const commonOptions = {
   responsive: true,
   maintainAspectRatio: false,
+  interaction: {
+    intersect: false,
+    mode: 'index' as const,
+  },
   plugins: {
     legend: {
       position: 'top' as const,
+      labels: {
+        usePointStyle: true,
+        padding: 20,
+        font: {
+          size: 12,
+        },
+      },
     },
+    tooltip: {
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      titleColor: '#1f2937',
+      bodyColor: '#374151',
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      borderWidth: 1,
+      cornerRadius: 8,
+      displayColors: true,
+      padding: 12,
+    },
+  },
+  animation: {
+    duration: 750,
+    easing: 'easeInOutQuart' as const,
   },
 };
 

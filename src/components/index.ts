@@ -22,6 +22,7 @@ export { PortfolioOverview } from './features/PortfolioOverview';
 
 // Common Components
 export { LoadingSpinner } from './common/LoadingSpinner';
+export { SkeletonLoader } from './common/SkeletonLoader';
 export { EmptyState } from './common/EmptyState';
 export { PageHeader } from './common/PageHeader';
 export { AppLogo, AppIcon } from './common/AppLogo';

@@ -16,6 +16,14 @@ import {
   Tooltip,
   Alert,
   CircularProgress,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  DialogContentText,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -24,6 +32,8 @@ import {
   Info,
   AccountBalance,
   CurrencyBitcoin,
+  MoreVert,
+  Delete,
 } from '@mui/icons-material';
 import type { Portfolio, InvestmentPerformance } from '../../types';
 import { InvestmentService } from '../../services/investmentService';
@@ -43,6 +53,9 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedAsset, setSelectedAsset] = useState<InvestmentPerformance | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const loadPortfolioData = async () => {
     try {
@@ -97,6 +110,69 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
     if (value > 0) return 'success.main';
     if (value < 0) return 'error.main';
     return 'text.secondary';
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, asset: InvestmentPerformance) => {
+    setMenuAnchorEl(event.currentTarget);
+    setSelectedAsset(asset);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    // Clear selectedAsset only if no dialog is open
+    if (!deleteDialogOpen) {
+      setSelectedAsset(null);
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+    setMenuAnchorEl(null); // Close menu but keep selectedAsset
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedAsset) {
+      console.error('No selectedAsset when trying to delete');
+      return;
+    }
+
+    try {
+      console.log('Attempting to delete investment:', selectedAsset.symbol);
+      
+      // Find the investment by symbol
+      const investment = InvestmentService.getInvestmentBySymbol(userId, selectedAsset.symbol);
+      if (!investment) {
+        console.error('Investment not found for symbol:', selectedAsset.symbol);
+        setError(`Investment ${selectedAsset.symbol} not found.`);
+        return;
+      }
+
+      console.log('Found investment to delete:', investment);
+      
+      const success = InvestmentService.deleteInvestment(investment.id);
+      if (success) {
+        console.log('Investment deleted successfully');
+        // Reload portfolio data
+        await loadPortfolioData();
+        if (onRefresh) {
+          onRefresh();
+        }
+      } else {
+        console.error('Delete operation returned false');
+        setError('Failed to delete investment. Investment may not exist.');
+      }
+    } catch (error) {
+      console.error('Error deleting investment:', error);
+      setError('Failed to delete investment. Please try again.');
+    } finally {
+      setDeleteDialogOpen(false);
+      setSelectedAsset(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setSelectedAsset(null);
   };
 
   if (isLoading) {
@@ -211,6 +287,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                       onClick={handleRefresh} 
                       disabled={isRefreshing}
                       size="small"
+                      aria-label="refresh portfolio data"
                     >
                       {isRefreshing ? (
                         <CircularProgress size={20} />
@@ -252,6 +329,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                   <TableCell align="right">Gain/Loss</TableCell>
                   <TableCell align="right">Return %</TableCell>
                   <TableCell align="right">Day Change</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -318,6 +396,15 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                         {formatPercent(asset.dayChangePercent)}
                       </Box>
                     </TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleMenuOpen(e, asset)}
+                        aria-label={`options for ${asset.symbol} investment`}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -333,6 +420,64 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
           </Box>
         </CardContent>
       </Card>
+
+      {/* Action Menu */}
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+          <Delete fontSize="small" sx={{ mr: 1 }} />
+          Delete Investment
+        </MenuItem>
+      </Menu>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Delete Investment</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete your <strong>{selectedAsset?.symbol}</strong> investment?
+            <br />
+            <br />
+            This will permanently remove:
+            <br />
+            • {selectedAsset?.quantity.toLocaleString()} shares
+            <br />
+            • Current value: {selectedAsset ? formatCurrency(selectedAsset.currentValue) : ''}
+            <br />
+            • All related transaction history
+            <br />
+            <br />
+            <strong>This action cannot be undone.</strong>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button 
+            onClick={handleDeleteConfirm} 
+            color="error" 
+            variant="contained"
+            startIcon={<Delete />}
+          >
+            Delete Investment
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
