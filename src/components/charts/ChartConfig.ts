@@ -140,6 +140,77 @@ export const areaChartOptions = {
   borderColor: 'rgba(75, 192, 192, 1)',
 };
 
+// Financial chart options (sharp lines, no smoothing)
+export const financialChartOptions = {
+  ...commonOptions,
+  scales: {
+    x: {
+      grid: {
+        display: false,
+      },
+      ticks: {
+        maxTicksLimit: 8,
+        font: {
+          size: 11,
+        },
+      },
+    },
+    y: {
+      position: 'right' as const,
+      grid: {
+        color: 'rgba(0, 0, 0, 0.05)',
+        drawTicks: false,
+      },
+      ticks: {
+        padding: 8,
+        font: {
+          size: 11,
+        },
+        callback: function(value: any) {
+          return '$' + value.toFixed(2);
+        },
+      },
+    },
+  },
+  elements: {
+    line: {
+      tension: 0, // Sharp lines, no smoothing
+    },
+    point: {
+      radius: 0, // No visible points
+      hoverRadius: 4,
+    },
+  },
+  plugins: {
+    ...commonOptions.plugins,
+    legend: {
+      position: 'bottom' as const,
+      labels: {
+        usePointStyle: true,
+        padding: 16,
+        font: {
+          size: 11,
+        },
+      },
+    },
+    tooltip: {
+      ...commonOptions.plugins.tooltip,
+      callbacks: {
+        title: function(context: any) {
+          return context[0].label;
+        },
+        label: function(context: any) {
+          const value = context.parsed.y;
+          if (context.datasetIndex === 0) {
+            return `Price: $${value.toFixed(2)}`;
+          }
+          return `Avg Cost: $${value.toFixed(2)}`;
+        },
+      },
+    },
+  },
+};
+
 // Color palettes
 export const colorPalettes = {
   primary: [

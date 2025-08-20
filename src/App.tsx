@@ -17,6 +17,7 @@ import { Goals } from './pages/Goals';
 import { Suspense, lazy } from 'react';
 const Analytics = lazy(() => import('./pages/Analytics').then(m => ({ default: m.Analytics })));
 const Investments = lazy(() => import('./pages/Investments').then(m => ({ default: m.Investments })));
+const InvestmentDetail = lazy(() => import('./pages/InvestmentDetail').then(m => ({ default: m.InvestmentDetail })));
 import { Settings } from './pages/Settings';
 
 // Import glassmorphism styles
@@ -43,6 +44,7 @@ function App() {
                   <Route path="/goals" element={<Goals />} />
                   <Route path="/analytics" element={<Analytics />} />
                   <Route path="/investments" element={<Investments />} />
+                  <Route path="/investments/:symbol" element={<InvestmentDetail />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route
                     path="*"

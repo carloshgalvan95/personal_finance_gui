@@ -41,3 +41,5 @@ export { MonthlyComparisonChart } from './charts/MonthlyComparisonChart';
 export { BudgetProgressChart } from './charts/BudgetProgressChart';
 export { FinancialHealthScore } from './charts/FinancialHealthScore';
 export { InvestmentPerformanceChart } from './charts/InvestmentPerformanceChart';
+export { InvestmentPriceChart } from './charts/InvestmentPriceChart';
+export { InvestmentPerformanceOverview } from './charts/InvestmentPerformanceOverview';

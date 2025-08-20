@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -48,6 +49,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
   userId,
   onRefresh 
 }) => {
+  const navigate = useNavigate();
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [performance, setPerformance] = useState<InvestmentPerformance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -173,6 +175,10 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
     setSelectedAsset(null);
+  };
+
+  const handleInvestmentClick = (symbol: string) => {
+    navigate(`/investments/${symbol}`);
   };
 
   if (isLoading) {
@@ -334,7 +340,12 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
               </TableHead>
               <TableBody>
                 {performance.map((asset) => (
-                  <TableRow key={asset.symbol} hover>
+                  <TableRow 
+                    key={asset.symbol} 
+                    hover 
+                    onClick={() => handleInvestmentClick(asset.symbol)}
+                    sx={{ cursor: 'pointer' }}
+                  >
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {getAssetIcon('', asset.symbol)}
@@ -399,7 +410,10 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                     <TableCell align="center">
                       <IconButton
                         size="small"
-                        onClick={(e) => handleMenuOpen(e, asset)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click
+                          handleMenuOpen(e, asset);
+                        }}
                         aria-label={`options for ${asset.symbol} investment`}
                       >
                         <MoreVert />
