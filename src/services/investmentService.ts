@@ -5,7 +5,7 @@ import type {
   InvestmentPerformance, 
   AssetPrice 
 } from '../types';
-import { LocalStorageService, STORAGE_KEYS } from './localStorage';
+import { LocalStorageService } from './localStorage';
 import { MarketDataService } from './marketDataService';
 
 export class InvestmentService {

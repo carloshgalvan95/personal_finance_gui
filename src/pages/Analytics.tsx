@@ -13,7 +13,6 @@ import {
   Tabs,
   Tab,
   Button,
-  Grid,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -496,8 +495,8 @@ export const Analytics: React.FC = () => {
             </Alert>
 
             {investmentStats && (
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={3}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3 }}>
+                <Box>
                   <Card className="glass-card">
                     <CardContent>
                       <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -508,9 +507,9 @@ export const Analytics: React.FC = () => {
                       </Typography>
                     </CardContent>
                   </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box>
                   <Card className="glass-card">
                     <CardContent>
                       <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -521,9 +520,9 @@ export const Analytics: React.FC = () => {
                       </Typography>
                     </CardContent>
                   </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box>
                   <Card className="glass-card">
                     <CardContent>
                       <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -534,9 +533,9 @@ export const Analytics: React.FC = () => {
                       </Typography>
                     </CardContent>
                   </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box>
                   <Card className="glass-card">
                     <CardContent>
                       <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -554,8 +553,8 @@ export const Analytics: React.FC = () => {
                       </Box>
                     </CardContent>
                   </Card>
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
             )}
           </Box>
         </TabPanel>

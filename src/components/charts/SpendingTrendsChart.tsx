@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { lineChartOptions, colorPalettes, formatCurrency } from './ChartConfig';
 import type { TimeSeriesDataPoint } from '../../services/analyticsService';
 

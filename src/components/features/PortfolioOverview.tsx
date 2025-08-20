@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Chip,
   IconButton,
   Table,
@@ -123,9 +122,9 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
       )}
 
       {/* Portfolio Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
         {/* Total Portfolio Value */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Box>
           <Card className="glass-card">
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -141,10 +140,10 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
         {/* Total Invested */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Box>
           <Card className="glass-card">
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -160,10 +159,10 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
         {/* Total Gain/Loss */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Box>
           <Card className="glass-card">
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -187,10 +186,10 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
         {/* Total Return % */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Box>
           <Card className="glass-card">
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -224,8 +223,8 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Portfolio Holdings Table */}
       <Card className="glass-card">

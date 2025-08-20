@@ -12,12 +12,13 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   size = 'medium', 
   showTooltip = true 
 }) => {
-  const { mode, toggleTheme, isLight } = useTheme();
+  const { toggleTheme, isLight } = useTheme();
 
   const iconButton = (
     <IconButton
       onClick={toggleTheme}
       size={size}
+      aria-label={`Switch to ${isLight ? 'dark' : 'light'} mode`}
       sx={{
         background: 'var(--bg-glass)',
         backdropFilter: 'blur(var(--blur-amount))',

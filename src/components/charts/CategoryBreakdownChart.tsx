@@ -1,6 +1,6 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { Box, Typography, Card, CardContent, List, ListItem, ListItemText, Chip } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText, Chip } from '@mui/material';
 import { doughnutChartOptions, formatCurrency } from './ChartConfig';
 import type { CategorySpendingData } from '../../services/analyticsService';
 

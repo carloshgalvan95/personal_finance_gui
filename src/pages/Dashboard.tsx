@@ -17,7 +17,6 @@ import {
   Add,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader } from '../components/common/PageHeader';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { RecentTransactions } from '../components/dashboard/RecentTransactions';
 import { BudgetOverview } from '../components/dashboard/BudgetOverview';

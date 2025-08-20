@@ -1,7 +1,5 @@
 import React from 'react';
 import { 
-  Card, 
-  CardContent, 
   Typography, 
   Box, 
   LinearProgress, 

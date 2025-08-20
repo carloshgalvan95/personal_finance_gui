@@ -80,6 +80,7 @@ export const Header: React.FC = () => {
           size="large"
           color="inherit"
           onClick={handleNotificationsOpen}
+          aria-label="Open notifications"
         >
           <NotificationsNone />
         </IconButton>
@@ -90,6 +91,7 @@ export const Header: React.FC = () => {
           edge="end"
           onClick={handleProfileMenuOpen}
           color="inherit"
+          aria-label="Open profile menu"
         >
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
             {state.user?.name?.charAt(0).toUpperCase() || <AccountCircle />}

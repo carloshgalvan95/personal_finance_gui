@@ -10,21 +10,20 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Grid,
   Alert,
   InputAdornment,
+  Box,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import type { InvestmentForm } from '../../types';
-import { MarketDataService } from '../../services/marketDataService';
+import type { InvestmentForm as InvestmentFormType } from '../../types';
 
 interface InvestmentFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: InvestmentForm) => void;
-  initialData?: Partial<InvestmentForm>;
+  onSubmit: (data: InvestmentFormType) => void;
+  initialData?: Partial<InvestmentFormType>;
 }
 
 const ASSET_OPTIONS = [
@@ -41,7 +40,7 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
   onSubmit,
   initialData = {},
 }) => {
-  const [formData, setFormData] = useState<InvestmentForm>({
+  const [formData, setFormData] = useState<InvestmentFormType>({
     symbol: initialData.symbol || '',
     type: initialData.type || 'etf',
     name: initialData.name || '',
@@ -52,7 +51,7 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleInputChange = (field: keyof InvestmentForm) => (
+  const handleInputChange = (field: keyof InvestmentFormType) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value;
@@ -149,9 +148,9 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
         <DialogTitle>Add Investment</DialogTitle>
         
         <DialogContent sx={{ pt: 2 }}>
-          <Grid container spacing={3}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
             {/* Asset Selection */}
-            <Grid item xs={12}>
+            <Box sx={{ gridColumn: '1 / -1' }}>
               <FormControl fullWidth>
                 <InputLabel>Asset</InputLabel>
                 <Select
@@ -179,10 +178,10 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                   </Alert>
                 )}
               </FormControl>
-            </Grid>
+            </Box>
 
             {/* Asset Type (Read-only, auto-filled) */}
-            <Grid item xs={12} sm={6}>
+            <Box>
               <TextField
                 fullWidth
                 label="Type"
@@ -192,10 +191,10 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                 }}
                 variant="outlined"
               />
-            </Grid>
+            </Box>
 
             {/* Asset Name (Auto-filled, editable) */}
-            <Grid item xs={12} sm={6}>
+            <Box>
               <TextField
                 fullWidth
                 label="Name"
@@ -204,10 +203,10 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                 error={!!errors.name}
                 helperText={errors.name}
               />
-            </Grid>
+            </Box>
 
             {/* Quantity */}
-            <Grid item xs={12} sm={6}>
+            <Box>
               <TextField
                 fullWidth
                 label="Quantity"
@@ -228,10 +227,10 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                   ),
                 }}
               />
-            </Grid>
+            </Box>
 
             {/* Purchase Price */}
-            <Grid item xs={12} sm={6}>
+            <Box>
               <TextField
                 fullWidth
                 label="Purchase Price"
@@ -245,10 +244,10 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
                 }}
               />
-            </Grid>
+            </Box>
 
             {/* Purchase Date */}
-            <Grid item xs={12}>
+            <Box sx={{ gridColumn: '1 / -1' }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Purchase Date"
@@ -264,11 +263,11 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                   maxDate={new Date()}
                 />
               </LocalizationProvider>
-            </Grid>
+            </Box>
 
             {/* Investment Summary */}
             {formData.quantity && formData.purchasePrice && (
-              <Grid item xs={12}>
+              <Box sx={{ gridColumn: '1 / -1' }}>
                 <Alert severity="info">
                   <strong>Total Investment:</strong> $
                   {(parseFloat(formData.quantity) * parseFloat(formData.purchasePrice)).toLocaleString(undefined, {
@@ -276,19 +275,19 @@ export const InvestmentForm: React.FC<InvestmentFormProps> = ({
                     maximumFractionDigits: 2,
                   })}
                 </Alert>
-              </Grid>
+              </Box>
             )}
 
             {/* Asset Info */}
             {selectedAsset && (
-              <Grid item xs={12}>
+              <Box sx={{ gridColumn: '1 / -1' }}>
                 <Alert severity="success">
                   You're adding <strong>{selectedAsset.name} ({selectedAsset.symbol})</strong> to your portfolio.
                   This is a {selectedAsset.type === 'etf' ? 'Exchange-Traded Fund' : 'Cryptocurrency'}.
                 </Alert>
-              </Grid>
+              </Box>
             )}
-          </Grid>
+          </Box>
         </DialogContent>
 
         <DialogActions>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Box, Typography, Card, CardContent, Chip } from '@mui/material';
+import { Box, Typography, Chip } from '@mui/material';
 import { barChartOptions, colorPalettes, formatCurrency } from './ChartConfig';
 import type { MonthlyComparisonData } from '../../services/analyticsService';
 

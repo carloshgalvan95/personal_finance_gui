@@ -10,7 +10,6 @@ import {
   Toolbar,
   Typography,
   Divider,
-  Avatar,
 } from '@mui/material';
 import {
   Dashboard,

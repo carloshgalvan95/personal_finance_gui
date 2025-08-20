@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Container, Paper, Typography, Grid } from '@mui/material';
+import { Box, Container, Paper, Typography } from '@mui/material';
+// Using Grid here is heavy; replace container with Box-based responsive layout
 import { LoginForm } from '../components/auth/LoginForm';
 import { RegisterForm } from '../components/auth/RegisterForm';
 import { AppLogo } from '../components/common/AppLogo';
@@ -40,14 +41,14 @@ export const Auth: React.FC = () => {
             display: 'flex',
           }}
         >
-          <Grid container sx={{ height: '100%' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '7fr 5fr' }, width: '100%' }}>
             {/* Left side - Illustration */}
-            <Grid item xs={12} md={7} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box sx={{ display: { xs: 'none', md: 'block' }, height: '100%' }}>
               <FinanceIllustration />
-            </Grid>
+            </Box>
             
             {/* Right side - Login Form */}
-            <Grid item xs={12} md={5}>
+            <Box>
               <Box
                 sx={{
                   height: '100%',
@@ -98,8 +99,8 @@ export const Auth: React.FC = () => {
                   )}
                 </Box>
               </Box>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Paper>
       </Container>
     </Box>

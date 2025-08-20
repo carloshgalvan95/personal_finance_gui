@@ -11,7 +11,7 @@ import {
   ArcElement,
   BarElement,
 } from 'chart.js';
-import { Line, Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut, Bar } from 'react-chartjs-2';
 import { Box, Typography, useTheme } from '@mui/material';
 import type { InvestmentPerformance } from '../../types';
 

@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
   Tabs,
   Tab,
   Alert,
@@ -182,11 +181,10 @@ export const Investments: React.FC = () => {
 
       {/* Market Overview Cards */}
       {marketData.length > 0 && (
-        <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
           {marketData.map((asset) => {
-            const assetInfo = MarketDataService.getAssetInfo(asset.symbol);
             return (
-              <Grid item xs={12} sm={6} md={4} lg={2.4} key={asset.symbol}>
+              <Box key={asset.symbol}>
                 <Card className="glass-card" sx={{ height: '100%' }}>
                   <CardContent sx={{ p: 2 }}>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -205,10 +203,10 @@ export const Investments: React.FC = () => {
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Box>
             );
           })}
-        </Grid>
+        </Box>
       )}
 
       {!hasInvestments ? (
@@ -236,13 +234,13 @@ export const Investments: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               Recommended Assets to Track
             </Typography>
-            <Grid container spacing={2} justifyContent="center">
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 2, justifyContent: 'center' }}>
               {['VOO', 'VT', 'GLD', 'QQQ', 'BTC'].map((symbol) => {
                 const assetInfo = MarketDataService.getAssetInfo(symbol);
                 const marketPrice = marketData.find(data => data.symbol === symbol);
                 
                 return (
-                  <Grid item xs={12} sm={6} md={4} key={symbol}>
+                  <Box key={symbol}>
                     <Card variant="outlined">
                       <CardContent>
                         <Typography variant="h6" fontWeight="bold">
@@ -258,10 +256,10 @@ export const Investments: React.FC = () => {
                         )}
                       </CardContent>
                     </Card>
-                  </Grid>
+                  </Box>
                 );
               })}
-            </Grid>
+            </Box>
           </Box>
         </Box>
       ) : (
@@ -283,8 +281,8 @@ export const Investments: React.FC = () => {
 
           <TabPanel value={activeTab} index={1}>
             {/* Portfolio Allocation */}
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={8}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' }, gap: 3 }}>
+              <Box>
                 <Card className="glass-card">
                   <CardContent>
                     <InvestmentPerformanceChart
@@ -295,8 +293,8 @@ export const Investments: React.FC = () => {
                     />
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={12} lg={4}>
+              </Box>
+              <Box>
                 <Card className="glass-card">
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
@@ -314,14 +312,14 @@ export const Investments: React.FC = () => {
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>
             {/* Performance Charts */}
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={6}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' }, gap: 3 }}>
+              <Box>
                 <Card className="glass-card">
                   <CardContent>
                     <InvestmentPerformanceChart
@@ -332,8 +330,8 @@ export const Investments: React.FC = () => {
                     />
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={12} lg={6}>
+              </Box>
+              <Box>
                 <Card className="glass-card">
                   <CardContent>
                     <InvestmentPerformanceChart
@@ -344,8 +342,8 @@ export const Investments: React.FC = () => {
                     />
                   </CardContent>
                 </Card>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </TabPanel>
 
           {/* Floating Add Button */}

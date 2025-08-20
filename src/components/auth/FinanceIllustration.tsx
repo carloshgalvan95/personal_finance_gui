@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { TrendingUp, Analytics, Savings, AccountBalance, Receipt, PieChart } from '@mui/icons-material';
+import { TrendingUp, Analytics, Receipt, PieChart } from '@mui/icons-material';
 
 export const FinanceIllustration: React.FC = () => {
   return (

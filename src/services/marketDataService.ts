@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AssetPrice, YahooFinanceQuote, CryptoQuote } from '../types';
+import type { AssetPrice } from '../types';
 
 export class MarketDataService {
   // Cache for storing fetched data to avoid repeated API calls

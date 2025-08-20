@@ -14,8 +14,9 @@ import { Dashboard } from './pages/Dashboard';
 import { Transactions } from './pages/Transactions';
 import { Budgets } from './pages/Budgets';
 import { Goals } from './pages/Goals';
-import { Analytics } from './pages/Analytics';
-import { Investments } from './pages/Investments';
+import { Suspense, lazy } from 'react';
+const Analytics = lazy(() => import('./pages/Analytics').then(m => ({ default: m.Analytics })));
+const Investments = lazy(() => import('./pages/Investments').then(m => ({ default: m.Investments })));
 import { Settings } from './pages/Settings';
 
 // Import glassmorphism styles
@@ -30,6 +31,7 @@ function App() {
             <Router>
             <ProtectedRoute>
               <AppLayout>
+                <Suspense fallback={<div />}> 
                 <Routes>
                   <Route
                     path="/"
@@ -47,6 +49,7 @@ function App() {
                     element={<Navigate to="/dashboard" replace />}
                   />
                 </Routes>
+                </Suspense>
               </AppLayout>
             </ProtectedRoute>
             </Router>

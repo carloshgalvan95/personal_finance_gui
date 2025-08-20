@@ -597,7 +597,8 @@ body::before {
 /* Modern Stats Grid */
 .modern-stats-grid {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  /* Use auto-fit to avoid creating empty tracks that cause jumpy resizing */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
   gap: clamp(1rem, 2.5vw, 1.5rem) !important;
   margin-bottom: clamp(2rem, 4vw, 3rem) !important;
 }
@@ -605,7 +606,9 @@ body::before {
 /* Modern Content Grid */
 .modern-content-grid {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+  /* auto-fit prevents layout oscillation when the container width changes */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  grid-auto-flow: dense !important;
   gap: clamp(1.5rem, 3vw, 2rem) !important;
   align-items: start !important;
 }
@@ -684,21 +687,21 @@ body::before {
 
 @media (min-width: 1025px) and (max-width: 1200px) {
   .modern-stats-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
   }
   
   .modern-content-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
   }
 }
 
 @media (min-width: 1201px) {
   .modern-stats-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
   }
   
   .modern-content-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
   }
 }
 
