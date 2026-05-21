@@ -1,8 +1,6 @@
 import axios from 'axios';
 import type { AssetPrice } from '../types';
-
-/** Routed through Vite dev/preview proxy to avoid browser CORS blocks. */
-const YAHOO_BASE = '/api/yahoo';
+import { fetchYahooChart } from './marketDataHttp';
 
 export class MarketDataService {
   // Cache for storing fetched data to avoid repeated API calls
@@ -133,19 +131,13 @@ export class MarketDataService {
     }
 
     try {
-      const response = await this.retryRequest(async () => {
-        return await axios.get(
-          `${YAHOO_BASE}/v8/finance/chart/${symbol}`,
-          { timeout: 10000 },
-        );
-      });
-
-      const result = response.data?.chart?.result?.[0];
+      const data = await this.retryRequest(async () => fetchYahooChart(symbol));
+      const result = (data as { chart?: { result?: unknown[] } })?.chart?.result?.[0];
       if (!result) {
         throw new Error('Invalid response format');
       }
 
-      const meta = result.meta;
+      const meta = (result as { meta: Record<string, number> }).meta;
       const currentPrice = meta.regularMarketPrice || meta.previousClose || 0;
       const previousClose = meta.previousClose || currentPrice;
       const change = currentPrice - previousClose;
@@ -300,21 +292,18 @@ export class MarketDataService {
 
       const { range, interval } = periodMap[period];
 
-      const response = await axios.get(
-        `${YAHOO_BASE}/v8/finance/chart/${symbol}`,
-        {
-          params: {
-            range,
-            interval,
-            includePrePost: false,
-            events: 'div,splits',
-          },
-          timeout: 15000,
-        },
-      );
+      const data = await fetchYahooChart(symbol, {
+        range,
+        interval,
+        includePrePost: 'false',
+        events: 'div,splits',
+      });
 
-      const result = response.data?.chart?.result?.[0];
-      if (!result || !result.timestamp) {
+      const result = (data as { chart?: { result?: unknown[] } })?.chart?.result?.[0] as {
+        timestamp?: number[];
+        indicators?: { quote?: { close?: number[]; volume?: number[] }[] };
+      } | undefined;
+      if (!result?.timestamp) {
         throw new Error('Invalid historical data response');
       }
 

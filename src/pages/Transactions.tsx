@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Button,
@@ -10,7 +10,7 @@ import {
   DialogActions,
   Typography,
 } from '@mui/material';
-import { Add, Receipt } from '@mui/icons-material';
+import { Add, Receipt, UploadFile } from '@mui/icons-material';
 import { PageHeader } from '../components/common/PageHeader';
 import { TransactionForm } from '../components/features/TransactionForm';
 import { TransactionList } from '../components/features/TransactionList';
@@ -37,6 +37,7 @@ export const Transactions: React.FC = () => {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   );
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -191,6 +192,43 @@ export const Transactions: React.FC = () => {
     setTransactionToDelete(null);
   };
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleCsvSelected = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !state.user) return;
+
+    try {
+      const text = await file.text();
+      const result = TransactionService.importFromCsv(state.user.id, text);
+      loadTransactions();
+
+      if (result.imported > 0) {
+        showSnackbar(
+          `Imported ${result.imported} transaction${result.imported === 1 ? '' : 's'}`,
+          'success',
+        );
+      }
+      if (result.errors.length > 0) {
+        showSnackbar(
+          `${result.errors.length} row(s) skipped. Check CSV format.`,
+          'info',
+        );
+      }
+      if (result.imported === 0 && result.errors.length === 0) {
+        showSnackbar('No transactions found in CSV', 'info');
+      }
+    } catch {
+      showSnackbar('Failed to import CSV', 'error');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
   return (
     <Box>
       <PageHeader
@@ -200,11 +238,28 @@ export const Transactions: React.FC = () => {
           { label: 'Dashboard', href: '/dashboard' },
           { label: 'Transactions' },
         ]}
+        actions={
+          <Button
+            variant="outlined"
+            startIcon={<UploadFile />}
+            onClick={handleImportClick}
+          >
+            Import CSV
+          </Button>
+        }
         primaryAction={{
           label: 'Add Transaction',
           onClick: handleAddTransaction,
           icon: <Add />,
         }}
+      />
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,text/csv"
+        hidden
+        onChange={handleCsvSelected}
       />
       
 

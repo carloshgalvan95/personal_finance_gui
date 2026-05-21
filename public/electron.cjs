@@ -1,6 +1,12 @@
-const { app, BrowserWindow, Menu, shell, dialog } = require('electron');
+const { app, BrowserWindow, Menu, shell, dialog, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
+
+ipcMain.handle('fetch-url', async (_event, url) => {
+  const response = await fetch(url);
+  const body = await response.text();
+  return { ok: response.ok, status: response.status, body };
+});
 
 // Keep a global reference of the window object
 let mainWindow;
@@ -17,8 +23,8 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      // Allow loading of local resources in development
-      webSecurity: !isDev
+      preload: path.join(__dirname, 'preload.cjs'),
+      webSecurity: !isDev,
     },
     show: false, // Don't show until ready-to-show
     titleBarStyle: process.platform === 'darwin' ? 'default' : 'default',

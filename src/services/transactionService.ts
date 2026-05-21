@@ -1,6 +1,7 @@
 import type { Transaction, TransactionCategory } from '../types';
 import { LocalStorageService, STORAGE_KEYS } from './localStorage';
 import { generateId } from '../utils';
+import { parseTransactionCsv } from '../utils/csvImport';
 
 export class TransactionService {
   /**
@@ -228,6 +229,30 @@ export class TransactionService {
         transaction.description.toLowerCase().includes(lowercaseSearch) ||
         transaction.category.toLowerCase().includes(lowercaseSearch)
     );
+  }
+
+  /**
+   * Bulk import transactions from bank-export CSV text.
+   */
+  static importFromCsv(
+    userId: string,
+    csvText: string,
+  ): { imported: number; skipped: number; errors: string[] } {
+    const { rows, errors } = parseTransactionCsv(csvText);
+    let imported = 0;
+
+    for (const row of rows) {
+      this.createTransaction(userId, {
+        type: row.type,
+        amount: row.amount,
+        category: row.category,
+        description: row.description,
+        date: new Date(`${row.date}T12:00:00`),
+      });
+      imported += 1;
+    }
+
+    return { imported, skipped: errors.length, errors };
   }
 }
 
@@ -584,6 +609,4 @@ export class CategoryService {
 
     return newCategory;
   }
-
-
 }

@@ -251,7 +251,13 @@ npm run dist:linux   # Build for Linux
 
 ## Testing
 
-Automated tests are not yet implemented in this repository. Use `npm run build`, `npm run lint`, and manual QA via `npm run dev` before releases.
+```bash
+npm test        # unit tests (CSV import, date revival)
+npm run build
+npm run lint
+```
+
+Sample bank CSV for import testing: `public/samples/transactions-sample.csv`
 
 ## 📈 Performance
 

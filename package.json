@@ -15,6 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "electron": "cross-env NODE_ENV=development electron .",
     "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
     "electron-pack": "npm run build && electron-builder",
@@ -59,7 +61,8 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4",
-    "wait-on": "^8.0.4"
+    "wait-on": "^8.0.4",
+    "vitest": "^3.2.4"
   },
   "build": {
     "appId": "com.carlosgalvan.personalfinancegui",
@@ -71,6 +74,7 @@
     "files": [
       "dist/**/*",
       "public/electron.cjs",
+      "public/preload.cjs",
       "node_modules/**/*"
     ],
     "mac": {
