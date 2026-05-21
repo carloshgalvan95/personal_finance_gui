@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -21,6 +22,7 @@ import { AppIcon } from '../common/AppLogo';
 import { ThemeToggle } from '../common/ThemeToggle';
 
 export const Header: React.FC = () => {
+  const navigate = useNavigate();
   const { state, logout } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationsAnchor, setNotificationsAnchor] =
@@ -48,8 +50,7 @@ export const Header: React.FC = () => {
   };
 
   const handleSettings = () => {
-    // TODO: Navigate to settings
-    console.log('Settings clicked');
+    navigate('/settings');
     handleProfileMenuClose();
   };
 

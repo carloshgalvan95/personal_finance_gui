@@ -1,3 +1,5 @@
+import { jsonDateReviver } from "../utils/dateReviver";
+
 /**
  * LocalStorage service for managing data persistence
  */
@@ -10,7 +12,7 @@ export class LocalStorageService {
     try {
       const item = localStorage.getItem(key);
       if (!item) return null;
-      return JSON.parse(item);
+      return JSON.parse(item, jsonDateReviver) as T;
     } catch (error) {
       console.error(`Error getting item from localStorage:`, error);
       return null;

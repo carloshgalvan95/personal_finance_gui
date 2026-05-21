@@ -228,9 +228,13 @@ export class InvestmentService {
     // Update investments with current prices
     const updatedInvestments = investments.map(investment => {
       const currentPriceData = priceMap.get(investment.symbol);
+      const priceUnavailable = currentPriceData?.unavailable === true;
+      const resolvedPrice = priceUnavailable
+        ? investment.currentPrice ?? investment.purchasePrice
+        : (currentPriceData?.price ?? investment.purchasePrice);
       return {
         ...investment,
-        currentPrice: currentPriceData?.price || 0,
+        currentPrice: resolvedPrice,
         lastUpdated: currentPriceData?.lastUpdated || new Date(),
       };
     });
@@ -279,7 +283,10 @@ export class InvestmentService {
 
     return investments.map(investment => {
       const currentPriceData = priceMap.get(investment.symbol);
-      const currentPrice = currentPriceData?.price || 0;
+      const priceUnavailable = currentPriceData?.unavailable === true;
+      const currentPrice = priceUnavailable
+        ? (investment.currentPrice ?? investment.purchasePrice)
+        : (currentPriceData?.price ?? investment.purchasePrice);
       const currentValue = investment.quantity * currentPrice;
       const investedValue = investment.quantity * investment.purchasePrice;
       const gainLoss = currentValue - investedValue;
@@ -299,6 +306,7 @@ export class InvestmentService {
         gainLossPercent,
         dayChange: currentPriceData?.change || 0,
         dayChangePercent: currentPriceData?.changePercent || 0,
+        priceUnavailable,
       };
     });
   }

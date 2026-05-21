@@ -2,7 +2,13 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import type { User, AuthState } from '../types';
 import { LocalStorageService, STORAGE_KEYS } from '../services/localStorage';
+import { seedDemoData } from '../services/demoData';
 import { generateId } from '../utils';
+import {
+  hashPassword,
+  isLegacyPlaintextHash,
+  verifyPassword,
+} from '../utils/passwordHash';
 
 // Auth Actions
 type AuthAction =
@@ -120,9 +126,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const storedPassword = LocalStorageService.get<string>(
         `password_${user.id}`
       );
-      if (storedPassword !== password) {
+      if (!storedPassword || !(await verifyPassword(password, storedPassword))) {
         dispatch({ type: 'LOGIN_FAILURE', payload: 'Invalid password' });
         return { success: false, error: 'Invalid password' };
+      }
+
+      if (isLegacyPlaintextHash(storedPassword)) {
+        LocalStorageService.set(
+          `password_${user.id}`,
+          await hashPassword(password),
+        );
       }
 
       // Success
@@ -167,8 +180,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Save user and password (in a real app, password would be hashed on backend)
       users.push(newUser);
       LocalStorageService.set('users', users);
-      LocalStorageService.set(`password_${newUser.id}`, password);
+      LocalStorageService.set(
+        `password_${newUser.id}`,
+        await hashPassword(password),
+      );
       LocalStorageService.set(STORAGE_KEYS.USER, newUser);
+      seedDemoData(newUser);
 
       dispatch({ type: 'REGISTER_SUCCESS', payload: newUser });
       return { success: true };

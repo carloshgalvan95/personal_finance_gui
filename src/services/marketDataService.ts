@@ -1,6 +1,9 @@
 import axios from 'axios';
 import type { AssetPrice } from '../types';
 
+/** Routed through Vite dev/preview proxy to avoid browser CORS blocks. */
+const YAHOO_BASE = '/api/yahoo';
+
 export class MarketDataService {
   // Cache for storing fetched data to avoid repeated API calls
   private static cache = new Map<string, { data: AssetPrice; timestamp: number }>();
@@ -132,13 +135,8 @@ export class MarketDataService {
     try {
       const response = await this.retryRequest(async () => {
         return await axios.get(
-          `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`,
-          {
-            timeout: 10000,
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-          }
+          `${YAHOO_BASE}/v8/finance/chart/${symbol}`,
+          { timeout: 10000 },
         );
       });
 
@@ -167,18 +165,15 @@ export class MarketDataService {
 
     } catch (error) {
       console.error(`Error fetching ETF price for ${symbol}:`, error);
-      
-      // Return fallback data with error indication
-      const fallbackPrice: AssetPrice = {
+      return {
         symbol,
         price: 0,
         change: 0,
         changePercent: 0,
         volume: 0,
         lastUpdated: new Date(),
+        unavailable: true,
       };
-
-      return fallbackPrice;
     }
   }
 
@@ -223,17 +218,14 @@ export class MarketDataService {
 
     } catch (error) {
       console.error('Error fetching Bitcoin price:', error);
-      
-      // Return fallback data
-      const fallbackPrice: AssetPrice = {
+      return {
         symbol: 'BTC',
         price: 0,
         change: 0,
         changePercent: 0,
         lastUpdated: new Date(),
+        unavailable: true,
       };
-
-      return fallbackPrice;
     }
   }
 
@@ -256,6 +248,7 @@ export class MarketDataService {
             change: 0,
             changePercent: 0,
             lastUpdated: new Date(),
+            unavailable: true,
           };
         }
       });
@@ -308,19 +301,16 @@ export class MarketDataService {
       const { range, interval } = periodMap[period];
 
       const response = await axios.get(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`,
+        `${YAHOO_BASE}/v8/finance/chart/${symbol}`,
         {
           params: {
             range,
             interval,
             includePrePost: false,
-            events: 'div,splits'
+            events: 'div,splits',
           },
           timeout: 15000,
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-          }
-        }
+        },
       );
 
       const result = response.data?.chart?.result?.[0];
@@ -343,48 +333,8 @@ export class MarketDataService {
 
     } catch (error) {
       console.error(`Error fetching historical data for ${symbol}:`, error);
-      
-      // Fallback to mock data if real API fails
-      console.log(`Falling back to mock data for ${symbol}`);
-      return this.generateMockHistoricalData(symbol, period);
+      return [];
     }
-  }
-
-  /**
-   * Generate mock historical data for charts
-   * Replace this with real API calls when needed
-   */
-  private static generateMockHistoricalData(symbol: string, period: string): any[] {
-    const now = new Date();
-    const data = [];
-    const days = period === '1d' ? 1 : period === '1w' ? 7 : period === '1m' ? 30 : period === '3m' ? 90 : 365;
-    
-    // Base prices for your assets
-    const basePrices: Record<string, number> = {
-      VOO: 420,
-      VT: 105,
-      GLD: 200,
-      QQQ: 380,
-      BTC: 45000,
-    };
-
-    const basePrice = basePrices[symbol] || 100;
-
-    for (let i = days; i >= 0; i--) {
-      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      // Add some realistic volatility
-      const volatility = symbol === 'BTC' ? 0.05 : 0.02; // Bitcoin more volatile
-      const randomChange = (Math.random() - 0.5) * volatility;
-      const price = basePrice * (1 + randomChange * (days - i) / days);
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        price: Math.round(price * 100) / 100,
-        volume: Math.floor(Math.random() * 1000000),
-      });
-    }
-
-    return data;
   }
 
   /**

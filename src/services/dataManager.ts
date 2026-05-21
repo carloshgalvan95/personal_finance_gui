@@ -393,6 +393,16 @@ export class DataManager {
         LocalStorageService.set('personal_finance_settings', backupData.settings);
       }
 
+      if (Array.isArray(backupData.investments)) {
+        LocalStorageService.set('personal_finance_investments', backupData.investments);
+      }
+      if (Array.isArray(backupData.investmentTransactions)) {
+        LocalStorageService.set(
+          'personal_finance_investment_transactions',
+          backupData.investmentTransactions,
+        );
+      }
+
       return { success: true };
     } catch (error) {
       console.error('Restore failed:', error);
@@ -539,6 +549,13 @@ export class DataManager {
       LocalStorageService.remove('personal_finance_settings');
       LocalStorageService.remove('personal_finance_data_created');
       LocalStorageService.remove('personal_finance_last_backup');
+      LocalStorageService.remove('personal_finance_investments');
+      LocalStorageService.remove('personal_finance_investment_transactions');
+      LocalStorageService.remove('personal_finance_demo_seeded');
+
+      LocalStorageService.getAllKeys()
+        .filter((key) => key.startsWith('password_') || key === 'users')
+        .forEach((key) => LocalStorageService.remove(key));
 
       return { success: true };
     } catch (error) {

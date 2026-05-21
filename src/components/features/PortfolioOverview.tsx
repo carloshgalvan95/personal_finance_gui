@@ -369,7 +369,13 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                       {formatCurrency(asset.purchasePrice)}
                     </TableCell>
                     <TableCell align="right">
-                      {formatCurrency(asset.currentPrice)}
+                      {asset.priceUnavailable ? (
+                        <Tooltip title="Live price unavailable — showing last known value">
+                          <Chip label="Stale" size="small" color="warning" />
+                        </Tooltip>
+                      ) : (
+                        formatCurrency(asset.currentPrice)
+                      )}
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                       {formatCurrency(asset.currentValue)}

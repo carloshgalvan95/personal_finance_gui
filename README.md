@@ -249,24 +249,9 @@ npm run dist:linux   # Build for Linux
 - **Secure Defaults**: Security-first configuration
 - **Regular Updates**: Keep dependencies up-to-date
 
-## 🧪 Testing
+## Testing
 
-### Test Structure
-```bash
-tests/
-├── unit/              # Unit tests
-├── integration/       # Integration tests
-├── e2e/              # End-to-end tests
-└── __mocks__/        # Test mocks
-```
-
-### Running Tests
-```bash
-npm test              # Run all tests
-npm run test:unit     # Run unit tests
-npm run test:e2e      # Run e2e tests
-npm run test:coverage # Generate coverage report
-```
+Automated tests are not yet implemented in this repository. Use `npm run build`, `npm run lint`, and manual QA via `npm run dev` before releases.
 
 ## 📈 Performance
 

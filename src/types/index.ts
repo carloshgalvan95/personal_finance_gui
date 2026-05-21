@@ -154,6 +154,8 @@ export interface AssetPrice {
   volume?: number;
   marketCap?: number;
   lastUpdated: Date;
+  /** True when live price could not be fetched */
+  unavailable?: boolean;
 }
 
 export interface Portfolio {
@@ -191,6 +193,7 @@ export interface InvestmentPerformance {
   gainLossPercent: number;
   dayChange: number;
   dayChangePercent: number;
+  priceUnavailable?: boolean;
 }
 
 // Investment Form Types

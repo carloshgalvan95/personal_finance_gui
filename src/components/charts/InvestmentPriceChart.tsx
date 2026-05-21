@@ -58,13 +58,17 @@ export const InvestmentPriceChart: React.FC<InvestmentPriceChartProps> = ({
                           timeFrame === '6M' ? '3m' : 
                           timeFrame === '1Y' ? '1y' : '1m';
 
-      // Try to get real historical data first
-      let historicalData;
-      try {
-        historicalData = await MarketDataService.fetchHistoricalData(symbol, apiTimeframe);
-      } catch (apiError) {
-        console.warn(`Failed to fetch real data for ${symbol}, falling back to mock data:`, apiError);
-        historicalData = generateFallbackData();
+      const historicalData = await MarketDataService.fetchHistoricalData(
+        symbol,
+        apiTimeframe,
+      );
+
+      if (historicalData.length === 0) {
+        setPriceHistory([]);
+        setError(
+          'Live price history is unavailable. Check your connection or try again later.',
+        );
+        return;
       }
 
       // Convert to our PricePoint format
@@ -90,93 +94,10 @@ export const InvestmentPriceChart: React.FC<InvestmentPriceChartProps> = ({
     } catch (error) {
       console.error('Error loading price history:', error);
       setError('Failed to load price history');
-      
-      // Fallback to mock data
-      const fallbackData = generateFallbackData();
-      const history: PricePoint[] = fallbackData.map((item: any) => ({
-        date: item.date,
-        price: item.price,
-        change: 0,
-        changePercent: 0,
-      }));
-      setPriceHistory(history);
+      setPriceHistory([]);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const generateFallbackData = () => {
-    // Generate mock historical data as fallback
-    const currentPriceValue = currentPrice?.price || averageCost;
-    const dataPoints = getDataPointsForTimeFrame(timeFrame);
-    const volatility = getVolatilityForSymbol(symbol);
-    
-    const data = [];
-    let basePrice = currentPriceValue;
-    
-    for (let i = dataPoints; i >= 0; i--) {
-      const date = getDateForTimeFrame(timeFrame, i);
-      
-      if (i > 0) {
-        const randomChange = (Math.random() - 0.5) * volatility;
-        const trendFactor = getTrendFactor(symbol, timeFrame, i, dataPoints);
-        basePrice = basePrice / (1 + randomChange + trendFactor);
-        basePrice = Math.max(basePrice, averageCost * 0.3);
-      } else {
-        basePrice = currentPriceValue;
-      }
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        price: basePrice,
-      });
-    }
-    
-    return data;
-  };
-
-  const getDataPointsForTimeFrame = (tf: TimeFrame): number => {
-    switch (tf) {
-      case '1D': return 24; // Hourly data for 1 day
-      case '1W': return 7;  // Daily data for 1 week
-      case '1M': return 30; // Daily data for 1 month
-      case '3M': return 90; // Daily data for 3 months
-      case '6M': return 180; // Daily data for 6 months
-      case '1Y': return 365; // Daily data for 1 year
-      case 'ALL': return 730; // Daily data for 2 years
-      default: return 90;
-    }
-  };
-
-  const getDateForTimeFrame = (tf: TimeFrame, daysAgo: number): Date => {
-    const now = new Date();
-    switch (tf) {
-      case '1D':
-        return new Date(now.getTime() - daysAgo * 60 * 60 * 1000); // Hours ago
-      default:
-        return new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000); // Days ago
-    }
-  };
-
-  const getVolatilityForSymbol = (symbol: string): number => {
-    // Different assets have different volatility levels
-    switch (symbol) {
-      case 'BTC': return 0.05; // Bitcoin is very volatile
-      case 'VOO':
-      case 'VT':
-      case 'QQQ': return 0.02; // ETFs are less volatile
-      case 'GLD': return 0.015; // Gold is relatively stable
-      default: return 0.02;
-    }
-  };
-
-  const getTrendFactor = (_symbol: string, tf: TimeFrame, daysAgo: number, totalDays: number): number => {
-    // Add slight upward trend for most assets over longer periods
-    if (tf === '1Y' || tf === 'ALL') {
-      const progress = (totalDays - daysAgo) / totalDays;
-      return progress * 0.001; // Small upward trend
-    }
-    return 0;
   };
 
   const handleTimeFrameChange = (_event: React.MouseEvent<HTMLElement>, newTimeFrame: TimeFrame | null) => {
