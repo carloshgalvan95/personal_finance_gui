@@ -97,38 +97,50 @@ export class DashboardService {
 
   // Get financial insights and alerts
   static getFinancialInsights(userId: string): {
-    alerts: string[];
+    alerts: { message: string; severity: 'warning' | 'error' }[];
     insights: string[];
   } {
     const dashboardData = this.getDashboardData(userId);
     const transactions = TransactionService.getTransactions(userId);
-    const alerts: string[] = [];
+    const alerts: { message: string; severity: 'warning' | 'error' }[] = [];
     const insights: string[] = [];
 
-    // Budget alerts
-    const overBudgetCategories = dashboardData.budgetStatus.filter(status => status.percentageUsed > 100);
-    const nearLimitCategories = dashboardData.budgetStatus.filter(status => 
-      status.percentageUsed >= 80 && status.percentageUsed <= 100
-    );
+    dashboardData.budgetStatus
+      .filter((status) => status.percentageUsed > 100)
+      .forEach((status) => {
+        alerts.push({
+          severity: 'error',
+          message: `${status.categoryName} is over budget (${status.percentageUsed.toFixed(0)}% — $${status.spentAmount.toFixed(2)} of $${status.budgetAmount.toFixed(2)})`,
+        });
+      });
 
-    if (overBudgetCategories.length > 0) {
-      alerts.push(`You're over budget in ${overBudgetCategories.length} ${overBudgetCategories.length === 1 ? 'category' : 'categories'}`);
-    }
+    dashboardData.budgetStatus
+      .filter(
+        (status) =>
+          status.percentageUsed >= 80 && status.percentageUsed <= 100,
+      )
+      .forEach((status) => {
+        alerts.push({
+          severity: 'warning',
+          message: `${status.categoryName} is at ${status.percentageUsed.toFixed(0)}% of budget ($${status.remainingAmount.toFixed(2)} left)`,
+        });
+      });
 
-    if (nearLimitCategories.length > 0) {
-      alerts.push(`You're approaching budget limits in ${nearLimitCategories.length} ${nearLimitCategories.length === 1 ? 'category' : 'categories'}`);
-    }
-
-    // Goal alerts
     const overdueGoals = GoalService.getOverdueGoals(userId);
     const nearDeadlineGoals = GoalService.getGoalsNearDeadline(userId);
 
     if (overdueGoals.length > 0) {
-      alerts.push(`You have ${overdueGoals.length} overdue ${overdueGoals.length === 1 ? 'goal' : 'goals'}`);
+      alerts.push({
+        severity: 'error',
+        message: `You have ${overdueGoals.length} overdue ${overdueGoals.length === 1 ? 'goal' : 'goals'}`,
+      });
     }
 
     if (nearDeadlineGoals.length > 0) {
-      alerts.push(`${nearDeadlineGoals.length} ${nearDeadlineGoals.length === 1 ? 'goal' : 'goals'} due within 30 days`);
+      alerts.push({
+        severity: 'warning',
+        message: `${nearDeadlineGoals.length} ${nearDeadlineGoals.length === 1 ? 'goal' : 'goals'} due within 30 days`,
+      });
     }
 
     // Financial insights

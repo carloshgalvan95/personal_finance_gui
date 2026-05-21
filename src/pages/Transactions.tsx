@@ -14,7 +14,9 @@ import { Add, Receipt, UploadFile } from '@mui/icons-material';
 import { PageHeader } from '../components/common/PageHeader';
 import { TransactionForm } from '../components/features/TransactionForm';
 import { TransactionList } from '../components/features/TransactionList';
+import { CsvImportDialog } from '../components/features/CsvImportDialog';
 import { AdvancedFilters } from '../components/features/AdvancedFilters';
+import { parseTransactionCsv, type CsvTransactionRow } from '../utils/csvImport';
 import { useAuth } from '../hooks/useAuth';
 import { TransactionService } from '../services/transactionService';
 import { FilterService, type TransactionFilters } from '../services/filterService';
@@ -38,6 +40,10 @@ export const Transactions: React.FC = () => {
     null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importPreviewOpen, setImportPreviewOpen] = useState(false);
+  const [importRows, setImportRows] = useState<CsvTransactionRow[]>([]);
+  const [importErrors, setImportErrors] = useState<string[]>([]);
+  const [importFileName, setImportFileName] = useState<string>();
 
 
 
@@ -204,29 +210,40 @@ export const Transactions: React.FC = () => {
 
     try {
       const text = await file.text();
-      const result = TransactionService.importFromCsv(state.user.id, text);
-      loadTransactions();
-
-      if (result.imported > 0) {
-        showSnackbar(
-          `Imported ${result.imported} transaction${result.imported === 1 ? '' : 's'}`,
-          'success',
-        );
-      }
-      if (result.errors.length > 0) {
-        showSnackbar(
-          `${result.errors.length} row(s) skipped. Check CSV format.`,
-          'info',
-        );
-      }
-      if (result.imported === 0 && result.errors.length === 0) {
-        showSnackbar('No transactions found in CSV', 'info');
-      }
+      const { rows, errors } = parseTransactionCsv(text);
+      setImportRows(rows);
+      setImportErrors(errors);
+      setImportFileName(file.name);
+      setImportPreviewOpen(true);
     } catch {
-      showSnackbar('Failed to import CSV', 'error');
+      showSnackbar('Failed to read CSV file', 'error');
     } finally {
       event.target.value = '';
     }
+  };
+
+  const handleConfirmImport = () => {
+    if (!state.user) return;
+    const imported = TransactionService.importRows(state.user.id, importRows);
+    loadTransactions();
+    setImportPreviewOpen(false);
+    setImportRows([]);
+    setImportErrors([]);
+
+    if (imported > 0) {
+      showSnackbar(
+        `Imported ${imported} transaction${imported === 1 ? '' : 's'}`,
+        'success',
+      );
+    } else {
+      showSnackbar('No transactions imported', 'info');
+    }
+  };
+
+  const handleCancelImport = () => {
+    setImportPreviewOpen(false);
+    setImportRows([]);
+    setImportErrors([]);
   };
 
   return (
@@ -280,6 +297,15 @@ export const Transactions: React.FC = () => {
         onEdit={handleEditTransaction}
         onDelete={handleDeleteTransaction}
         isLoading={isLoading}
+      />
+
+      <CsvImportDialog
+        open={importPreviewOpen}
+        rows={importRows}
+        errors={importErrors}
+        fileName={importFileName}
+        onClose={handleCancelImport}
+        onConfirm={handleConfirmImport}
       />
 
       {/* Transaction Form Dialog */}

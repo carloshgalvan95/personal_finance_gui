@@ -250,7 +250,10 @@ export const Dashboard: React.FC = () => {
   
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [insights, setInsights] = useState<{ alerts: string[]; insights: string[] }>({
+  const [insights, setInsights] = useState<{
+    alerts: { message: string; severity: 'warning' | 'error' }[];
+    insights: string[];
+  }>({
     alerts: [],
     insights: [],
   });
@@ -415,7 +418,7 @@ export const Dashboard: React.FC = () => {
             {insights.alerts.map((alert, index) => (
               <Alert 
                 key={`alert-${index}`}
-                severity="warning" 
+                severity={alert.severity}
                 sx={{ 
                   mb: 1.5,
                   borderRadius: '12px',
@@ -423,7 +426,7 @@ export const Dashboard: React.FC = () => {
                   fontWeight: 500,
                 }}
               >
-                {alert}
+                {alert.message}
               </Alert>
             ))}
             {insights.insights.slice(0, 2).map((insight, index) => (

@@ -1,5 +1,6 @@
 import type { Budget, BudgetForm, BudgetStatus, Transaction } from '../types';
 import { LocalStorageService } from './localStorage';
+import { CategoryService } from './transactionService';
 import { generateId } from '../utils';
 
 const BUDGETS_KEY = 'personal_finance_budgets';
@@ -43,9 +44,9 @@ export class BudgetService {
     
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endDate = budgetData.period === 'monthly' 
-      ? new Date(now.getFullYear(), now.getMonth() + 1, 0)
-      : new Date(now.getFullYear() + 1, now.getMonth(), 0);
+    const endDate = budgetData.period === 'monthly'
+      ? new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+      : new Date(now.getFullYear() + 1, now.getMonth(), 0, 23, 59, 59, 999);
 
     const newBudget: Budget = {
       id: generateId(),
@@ -102,7 +103,7 @@ export class BudgetService {
   // Calculate budget status for all budgets
   static getBudgetStatuses(userId: string, transactions: Transaction[]): BudgetStatus[] {
     const budgets = this.getBudgets(userId);
-    const categories = this.getCategories();
+    const categories = CategoryService.getCategories();
     
     return budgets.map(budget => {
       const category = categories.find(cat => cat.id === budget.categoryId);
@@ -126,7 +127,7 @@ export class BudgetService {
         budgetAmount: budget.amount,
         spentAmount,
         remainingAmount,
-        percentageUsed: Math.min(100, percentageUsed),
+        percentageUsed,
       };
     });
   }
@@ -136,7 +137,7 @@ export class BudgetService {
     const budget = this.getBudgets(userId).find(b => b.categoryId === categoryId);
     if (!budget) return null;
 
-    const categories = this.getCategories();
+    const categories = CategoryService.getCategories();
     const category = categories.find(cat => cat.id === categoryId);
     const categoryName = category?.name || 'Unknown Category';
     
@@ -157,29 +158,15 @@ export class BudgetService {
       budgetAmount: budget.amount,
       spentAmount,
       remainingAmount,
-      percentageUsed: Math.min(100, percentageUsed),
+      percentageUsed,
     };
-  }
-
-  // Get available categories (reusing from transaction service)
-  private static getCategories() {
-    return [
-      // Expense categories
-      { id: 'food', name: 'Food & Dining', type: 'expense' as const, color: '#ff6b6b' },
-      { id: 'transportation', name: 'Transportation', type: 'expense' as const, color: '#4ecdc4' },
-      { id: 'shopping', name: 'Shopping', type: 'expense' as const, color: '#45b7d1' },
-      { id: 'entertainment', name: 'Entertainment', type: 'expense' as const, color: '#96ceb4' },
-      { id: 'bills', name: 'Bills & Utilities', type: 'expense' as const, color: '#feca57' },
-      { id: 'healthcare', name: 'Healthcare', type: 'expense' as const, color: '#ff9ff3' },
-      { id: 'education', name: 'Education', type: 'expense' as const, color: '#54a0ff' },
-      { id: 'travel', name: 'Travel', type: 'expense' as const, color: '#5f27cd' },
-      { id: 'other-expense', name: 'Other Expenses', type: 'expense' as const, color: '#999999' },
-    ];
   }
 
   // Get expense categories only (for budget creation)
   static getExpenseCategories() {
-    return this.getCategories().filter(category => category.type === 'expense');
+    return CategoryService.getCategories().filter(
+      (category) => category.type === 'expense',
+    );
   }
 
   // Check if user is over budget for any category

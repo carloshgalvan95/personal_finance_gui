@@ -505,6 +505,16 @@ export class DataManager {
         LocalStorageService.set('personal_finance_settings', data.settings);
       }
 
+      if (Array.isArray(data.investments)) {
+        LocalStorageService.set('personal_finance_investments', data.investments);
+      }
+      if (Array.isArray(data.investmentTransactions)) {
+        LocalStorageService.set(
+          'personal_finance_investment_transactions',
+          data.investmentTransactions,
+        );
+      }
+
       return { success: true, warnings: warnings.length > 0 ? warnings : undefined };
     } catch (error) {
       return {

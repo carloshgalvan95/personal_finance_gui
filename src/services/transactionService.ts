@@ -1,7 +1,7 @@
 import type { Transaction, TransactionCategory } from '../types';
 import { LocalStorageService, STORAGE_KEYS } from './localStorage';
 import { generateId } from '../utils';
-import { parseTransactionCsv } from '../utils/csvImport';
+import { parseTransactionCsv, type CsvTransactionRow } from '../utils/csvImport';
 
 export class TransactionService {
   /**
@@ -239,8 +239,15 @@ export class TransactionService {
     csvText: string,
   ): { imported: number; skipped: number; errors: string[] } {
     const { rows, errors } = parseTransactionCsv(csvText);
-    let imported = 0;
+    const imported = this.importRows(userId, rows);
+    return { imported, skipped: errors.length, errors };
+  }
 
+  static importRows(
+    userId: string,
+    rows: CsvTransactionRow[],
+  ): number {
+    let imported = 0;
     for (const row of rows) {
       this.createTransaction(userId, {
         type: row.type,
@@ -251,8 +258,7 @@ export class TransactionService {
       });
       imported += 1;
     }
-
-    return { imported, skipped: errors.length, errors };
+    return imported;
   }
 }
 
